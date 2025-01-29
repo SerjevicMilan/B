@@ -132,13 +132,18 @@ public class Model {
 
                 if (tile(i, j) == null)
                     continue;
-                if (tit)
-                }
+                if (i + 1 < size && tile(i + 1, j) != null && tile(i + 1, j).value() == tile(i, j).value())
+                    return true;
+                if (i - 1 >= 0 && tile(i - 1, j) != null && tile(i - 1, j).value() == tile(i, j).value())
+                    return true;
+                if (j + 1 < size && tile(i, j + 1) != null && tile(i, j + 1).value() == tile(i, j).value())
+                    return true;
+                if (j - 1 >= 0 && tile(i, j - 1) != null && tile(i, j - 1).value() == tile(i, j).value())
+                    return true;
             }
         }
         return false;
 
-        }
     }
 
     /**
