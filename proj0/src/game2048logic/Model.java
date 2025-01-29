@@ -85,6 +85,14 @@ public class Model {
      * */
     public boolean emptySpaceExists() {
         // TODO: Task 2. Fill in this function.
+        int size = size();
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                if (tile(i, j) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -95,6 +103,16 @@ public class Model {
      */
     public boolean maxTileExists() {
         // TODO: Task 3. Fill in this function.
+        int size = size();
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                if (tile(i, j) == null)
+                    continue;
+                if (MAX_PIECE == tile(i, j).value()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -106,7 +124,21 @@ public class Model {
      */
     public boolean atLeastOneMoveExists() {
         // TODO: Fill in this function.
+        if(emptySpaceExists())
+            return true;
+        int size = size();
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+
+                if (tile(i, j) == null)
+                    continue;
+                if (tit)
+                }
+            }
+        }
         return false;
+
+        }
     }
 
     /**
