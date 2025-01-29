@@ -11,7 +11,7 @@ public class BombMain {
         // TODO: Find the correct inputs (passwords) to each phase using debugging techniques
         Bomb b = new Bomb();
         if (phase >= 0) {
-            b.phase0("Figure this out. I wonder where the phases are defined...");
+            b.phase0("bomb. \nBombTest");
         }
         if (phase >= 1) {
             b.phase1(null); // Figure this out too
