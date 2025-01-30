@@ -191,7 +191,7 @@ public class Model {
     }
 
     private boolean ifBadToMerge(Tile current, Tile potential, int i) {
-        if (!ifEmpty(potential) && withinBounds(i - 1) && (!equalValues(current,potential) || potential.wasMerged()) )
+        if (!ifEmpty(potential) && withinBounds(i - 1) && (!equalValues(current,potential) || potential.wasMerged() || current.wasMerged()) )
             return true;
         return false;
     }
@@ -222,7 +222,8 @@ public class Model {
                 break;
             }
             if (ifBadToMerge(currTile,chekTile, i)){
-                getBoard().move(x, i - 1, currTile);//go one back and move tile
+                if (targetY != i -1)
+                    getBoard().move(x, i - 1, currTile);//go one back and move tile
                 break;
             }
             if (last_position(i, size - 1)){
@@ -252,9 +253,11 @@ public class Model {
 
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
+        board.setViewingPerspective(side);
         for (int x = 0; x < size(); x++) {
             tiltColumn(x);
         }
+        board.setViewingPerspective(Side.NORTH);
     }
 
     /** Tilts every column of the board toward SIDE.
