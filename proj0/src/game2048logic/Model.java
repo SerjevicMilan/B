@@ -160,6 +160,53 @@ public class Model {
      *    value, then the leading two tiles in the direction of motion merge,
      *    and the trailing tile does not.
      */
+    private boolean ifEmpty(Tile t){
+        if (t == null)
+            return true;
+        else
+            return false;
+    }
+
+    private boolean withinBounds(int i) {
+        if (i < size() - 1 && i >= 0)
+            return true;
+        else
+            return false;
+    }
+
+    private boolean equalValues( Tile t1, Tile t2){
+        if(t1.value() == t2.value())
+            return true;
+        return false;
+    }
+
+    private boolean ifGoodToMerge(Tile current,Tile potential){
+        if (!ifEmpty(potential)  && !potential.wasMerged() && !current.wasMerged() && equalValues(current, potential))
+            return true;
+        return false;
+    }
+    private void merge(int x,int y, Tile current) {
+        getBoard().move(x, y, current);
+        this.score += current.value() * 2;
+    }
+
+    private boolean ifBadToMerge(Tile current, Tile potential, int i) {
+        if (!ifEmpty(potential) && !equalValues(current, potential) && withinBounds(i - 1))
+            return true;
+        return false;
+    }
+    private boolean skipeTile(Tile potential, int i){
+        if ( ifEmpty(potential) && withinBounds(i))
+            return true;
+        return false;
+    }
+
+    private boolean last_position(int i, int size) {
+        if (i == size)
+            return true;
+        return false;
+    }
+
     public void moveTileUpAsFarAsPossible(int x, int y) {
         Tile currTile = board.tile(x, y);
         int myValue = currTile.value();
@@ -168,19 +215,18 @@ public class Model {
         Tile chekTile;
         for (int i = targetY + 1; i < size; i++) {
             chekTile = tile(x, i);
-            if ( chekTile == null && i != size - 1)
+            if (skipeTile(chekTile, i))
                 continue;
-            if (chekTile != null && !chekTile.wasMerged() && chekTile.value() == myValue) {
-                getBoard().move(x, i, currTile);
-                this.score += myValue * 2;
+            if (ifGoodToMerge(currTile, chekTile)) {
+                merge(x, i, currTile);
                 break;
             }
-            if (chekTile != null && chekTile.value() != myValue && i - 1 >= 0) {
-                getBoard().move(x, i - 1, currTile);
+            if (ifBadToMerge(currTile,chekTile, i)){
+                getBoard().move(x, i - 1, currTile);//go one back and move tile
                 break;
             }
-            if ( i == size - 1){
-                getBoard().move(x, i, currTile);
+            if (last_position(i, size - 1)){
+                getBoard().move(x, i, currTile);//move to last position
                 break;
             }
         }
