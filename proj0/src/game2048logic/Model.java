@@ -164,8 +164,27 @@ public class Model {
         Tile currTile = board.tile(x, y);
         int myValue = currTile.value();
         int targetY = y;
+        int size = size();
+        Tile chekTile;
+        for (int i = targetY + 1; i < size; i++) {
+            chekTile = tile(x, i);
+            if ( chekTile == null && i != size - 1)
+                continue;
+            if (chekTile != null && !chekTile.wasMerged() && chekTile.value() == myValue) {
+                getBoard().move(x, i, currTile);
+                this.score += myValue * 2;
+                break;
+            }
+            if (chekTile != null && chekTile.value() != myValue && i - 1 >= 0) {
+                getBoard().move(x, i - 1, currTile);
+                break;
+            }
+            if ( i == size - 1){
+                getBoard().move(x, i, currTile);
+                break;
+            }
+        }
 
-        // TODO: Tasks 5, 6, and 10. Fill in this function.
     }
 
     /** Handles the movements of the tilt in column x of the board
