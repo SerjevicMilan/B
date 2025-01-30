@@ -191,7 +191,7 @@ public class Model {
     }
 
     private boolean ifBadToMerge(Tile current, Tile potential, int i) {
-        if (!ifEmpty(potential) && !equalValues(current, potential) && withinBounds(i - 1))
+        if (!ifEmpty(potential) && withinBounds(i - 1) && (!equalValues(current,potential) || potential.wasMerged()) )
             return true;
         return false;
     }
