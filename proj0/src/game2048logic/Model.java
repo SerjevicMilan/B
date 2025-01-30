@@ -194,10 +194,21 @@ public class Model {
      * */
     public void tiltColumn(int x) {
         // TODO: Task 7. Fill in this function.
+        Tile curentTile;
+
+        for (int y = size() - 2; y >= 0; y--) {
+            curentTile = tile(x, y);
+            if (curentTile == null)
+                continue;
+            moveTileUpAsFarAsPossible(x, y);
+        }
     }
 
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
+        for (int x = 0; x < size(); x++) {
+            tiltColumn(x);
+        }
     }
 
     /** Tilts every column of the board toward SIDE.
