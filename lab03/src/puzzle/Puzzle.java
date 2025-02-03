@@ -20,10 +20,12 @@ public class Puzzle {
     public static int puzzle() {
         int answer = loadAnswer(ANSWER_FILE);
 
+
         if (isCorrect(answer)) {
             System.out.println("That's correct! Nice work!");
             return answer;
         }
+
 
         Random r = new Random();
         r.setSeed(1678_971_254);
@@ -65,7 +67,7 @@ public class Puzzle {
                 Hint: Use an exception breakpoint.""");
         while (r.nextInt(100) != 10) {
             guessThis += r.nextInt();
-            s = LOTS_OF_STRINGS[r.nextInt(LOTS_OF_STRINGS.length + 1)];
+            s = LOTS_OF_STRINGS[r.nextInt(LOTS_OF_STRINGS.length)];
         }
     }
 
