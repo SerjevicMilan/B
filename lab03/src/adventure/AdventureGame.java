@@ -40,6 +40,8 @@ public class AdventureGame {
             if (poss != null) {
                 break;
             }
+            if(poss == null)
+                return;
 
             System.out.println("Sorry, I don't understand that. Please type one of the responses in the brackets!");
         }
