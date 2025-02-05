@@ -55,7 +55,268 @@ public class LinkedListDeque61BTest {
 
          assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
      }
-
     // Below, you'll write your own tests for LinkedListDeque61B.
+    @Test
+    /** Test for empty deque buy adding and removing elements */
+    public void isEmptyTest() {
+        Deque61B<Integer> deq1 = new LinkedListDeque61B<>();
+
+        deq1.addLast(0);   // [0]
+        deq1.addLast(1);   // [0, 1]
+        deq1.addFirst(-1); // [-1, 0, 1]
+        deq1.addLast(2);   // [-1, 0, 1, 2]
+        deq1.addFirst(-2); // [-2, -1, 0, 1, 2]
+
+        assertThat(deq1.isEmpty()).isFalse();
+
+        deq1.removeFirst();
+        deq1.removeLast();
+
+        assertThat(deq1.isEmpty()).isFalse();
+
+        deq1.removeLast();
+        deq1.removeFirst();
+        deq1.removeFirst();
+
+        assertThat(deq1.isEmpty()).isTrue();
+
+        deq1.removeLast();
+
+        assertThat(deq1.isEmpty()).isTrue();
+
+        Deque61B<Integer> deq2 = new LinkedListDeque61B<>();
+
+        assertThat(deq2.isEmpty()).isTrue();
+
+        //needs more tests later
+    }
+    @Test
+    public void sizeTest() {
+        Deque61B<Integer> deq1 = new LinkedListDeque61B<>();
+
+        deq1.addLast(0);   // [0]
+        deq1.addLast(1);   // [0, 1]
+        deq1.addFirst(-1); // [-1, 0, 1]
+        deq1.addLast(2);   // [-1, 0, 1, 2]
+        deq1.addFirst(-2); // [-2, -1, 0, 1, 2]
+
+        assertThat(deq1.size()).isEqualTo(5);
+
+        deq1.removeFirst();
+        deq1.removeLast();
+
+        assertThat(deq1.size()).isEqualTo(3);
+
+        deq1.removeLast();
+        deq1.removeFirst();
+        deq1.removeFirst();
+
+        assertThat(deq1.size()).isEqualTo(0);
+
+        deq1.removeLast();
+
+        assertThat(deq1.size()).isEqualTo(0);
+
+        Deque61B<Integer> deq2 = new LinkedListDeque61B<>();
+
+        assertThat(deq2.size()).isEqualTo(0);
+
+        //needs more tests later
+    }
+
+    @Test
+    public void getTest() {
+        Deque61B<Integer> deq1 = new LinkedListDeque61B<>();
+
+        deq1.addLast(0);   // [0]
+        deq1.addLast(1);   // [0, 1]
+        deq1.addFirst(-1); // [-1, 0, 1]
+        deq1.addLast(2);   // [-1, 0, 1, 2]
+        deq1.addFirst(-2); // [-2, -1, 0, 1, 2]
+
+        assertThat(deq1.get(0)).isEqualTo(-2);
+        assertThat(deq1.get(4)).isEqualTo(2);
+        assertThat(deq1.get(-1)).isEqualTo(null);
+        assertThat(deq1.get(5)).isEqualTo(null);
+
+        Deque61B<Integer> deq2 = new LinkedListDeque61B<>();
+
+        assertThat(deq2.get(0)).isEqualTo(null);
+
+        //needs more tests later
+    }
+
+    @Test
+    public void getRecursiveTest() {
+        Deque61B<Integer> deq1 = new LinkedListDeque61B<>();
+
+        deq1.addLast(0);   // [0]
+        deq1.addLast(1);   // [0, 1]
+        deq1.addFirst(-1); // [-1, 0, 1]
+        deq1.addLast(2);   // [-1, 0, 1, 2]
+        deq1.addFirst(-2); // [-2, -1, 0, 1, 2]
+
+        assertThat(deq1.getRecursive(0)).isEqualTo(-2);
+        assertThat(deq1.getRecursive(4)).isEqualTo(2);
+        assertThat(deq1.getRecursive(-1)).isEqualTo(null);
+        assertThat(deq1.getRecursive(5)).isEqualTo(null);
+
+        Deque61B<Integer> deq2 = new LinkedListDeque61B<>();
+
+        assertThat(deq2.getRecursive(0)).isEqualTo(null);
+
+        //needs more tests later
+    }
+
+    @Test
+    public void removeFirstTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+
+        //filing deq with elements
+        lld1.addLast(0);   // [0]
+        lld1.addLast(1);   // [0, 1]
+        lld1.addFirst(-1); // [-1, 0, 1]
+        lld1.addLast(2);   // [-1, 0, 1, 2]
+        lld1.addFirst(-2); // [-2, -1, 0, 1, 2]
+
+        //checking return value and deq state
+        assertThat(lld1.removeFirst()).isEqualTo(-2);
+        assertThat(lld1.toList()).containsExactly(-1, 0, 1, 2).inOrder();
+
+        /* chek for remove from empty deq */
+        Deque61B<Integer> lld2 = new LinkedListDeque61B<>();
+        lld2.addLast(0);   // [0]
+
+        assertThat(lld2.removeFirst()).isEqualTo(0);
+        assertThat(lld2.removeFirst()).isEqualTo(null);
+        assertThat(lld2.toList()).containsExactly().inOrder();
+    }
+
+    @Test
+    public void removeLastTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+
+        //filing deq with elements
+        lld1.addLast(0);   // [0]
+        lld1.addLast(1);   // [0, 1]
+        lld1.addFirst(-1); // [-1, 0, 1]
+        lld1.addLast(2);   // [-1, 0, 1, 2]
+        lld1.addFirst(-2); // [-2, -1, 0, 1, 2]
+
+        //checking return value and deq state
+        assertThat(lld1.removeLast()).isEqualTo(2);
+        assertThat(lld1.toList()).containsExactly(-2,-1, 0, 1).inOrder();
+
+        /* chek for remove from empty deq */
+        Deque61B<Integer> lld2 = new LinkedListDeque61B<>();
+        lld2.addLast(0);   // [0]
+
+        assertThat(lld2.removeLast()).isEqualTo(0);
+        assertThat(lld2.removeLast()).isEqualTo(null);
+        assertThat(lld2.toList()).containsExactly().inOrder();
+    }
+
+    @Test
+    public void removeLastFirstTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+
+        //filing deq with elements
+        lld1.addLast(0);   // [0]
+        lld1.addLast(1);   // [0, 1]
+        lld1.addFirst(-1); // [-1, 0, 1]
+        lld1.addLast(2);   // [-1, 0, 1, 2]
+        lld1.addFirst(-2); // [-2, -1, 0, 1, 2]
+
+        //checking return value and deq state
+        assertThat(lld1.removeLast()).isEqualTo(2);
+        assertThat(lld1.toList()).containsExactly(-2,-1, 0, 1).inOrder();
+
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(-1, 0, 1).inOrder();
+
+        lld1.removeLast();
+        lld1.removeFirst();
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly().inOrder();
+
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly().inOrder();
+
+        /* chek for remove from empty deq */
+        Deque61B<Integer> lld2 = new LinkedListDeque61B<>();
+        lld2.addLast(0);   // [0]
+
+        assertThat(lld2.removeLast()).isEqualTo(0);
+        assertThat(lld2.removeLast()).isEqualTo(null);
+        assertThat(lld2.toList()).containsExactly().inOrder();
+    }
+
+    @Test
+    public void recursiveGetLargeTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        for (int i = 0; i < 500; i++) {
+            lld1.addLast(i);
+        }
+        assertThat(lld1.getRecursive(499)).isEqualTo(499);
+        assertThat(lld1.getRecursive(500)).isEqualTo(null);
+    }
+
+    @Test
+    public void reverseOrderTest() {
+        Deque61B<String> lld1 = new LinkedListDeque61B<>();
+        lld1.addFirst("third");
+        lld1.addFirst("second");
+        lld1.addFirst("first");
+        assertThat(lld1.removeLast()).isEqualTo("third");
+        assertThat(lld1.removeLast()).isEqualTo("second");
+        assertThat(lld1.removeLast()).isEqualTo("first");
+        assertThat(lld1.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void addNullElementTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        try {
+            lld1.addFirst(null);
+            assertWithMessage("Deque should not accept null elements").fail();
+        } catch (NullPointerException e) {
+            assertThat(true).isTrue(); // Pass if exception is thrown
+        }
+    }
+
+    @Test
+    public void largeNumberOfElementsTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        for (int i = 0; i < 1000; i++) {
+            lld1.addLast(i);
+        }
+        assertThat(lld1.size()).isEqualTo(1000);
+        assertThat(lld1.get(999)).isEqualTo(999);
+        for (int i = 0; i < 1000; i++) {
+            lld1.removeFirst();
+        }
+        assertThat(lld1.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void multipleRemovalsFromEmptyDeque() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.removeFirst();
+        lld1.removeLast();
+        lld1.removeFirst();
+        assertThat(lld1.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void stressTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        for (int i = 0; i < 10000; i++) {
+            lld1.addFirst(i);
+            assertThat(lld1.removeFirst()).isEqualTo(i);
+        }
+        assertThat(lld1.isEmpty()).isTrue();
+    }
+
 
 }
+

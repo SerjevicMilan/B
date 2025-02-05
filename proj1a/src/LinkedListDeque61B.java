@@ -26,6 +26,10 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
 
     @Override
     public void addFirst(T x) {
+        if (x == null) {
+            throw new NullPointerException("Variable cannot be null");
+        }
+
         Node firstN = new Node(x);
         firstN.next = sentinal.next;
         firstN.prev = sentinal;
@@ -36,6 +40,10 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
 
     @Override
     public void addLast(T x) {
+        if (x == null) {
+            throw new NullPointerException("Variable cannot be null");
+        }
+
         Node lastN = new Node(x);
         lastN.prev = sentinal.prev;
         lastN.next = sentinal;
@@ -57,31 +65,60 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return (size == 0);
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public T removeFirst() {
-        return null;
+        if(size == 0)
+            return null;
+        Node first = sentinal.next;
+        sentinal.next = first.next;
+        first.next.prev = sentinal;
+        size--;
+        return first.value;
     }
 
     @Override
     public T removeLast() {
-        return null;
+        if(size == 0)
+            return null;
+        Node last = sentinal.prev;
+        sentinal.prev = last.prev;
+        last.prev.next = sentinal;
+        size--;
+        return last.value;
     }
 
     @Override
     public T get(int index) {
-        return null;
+        if(index < 0 || index >= size)
+            return null;
+        Node start = sentinal.next;
+        while (index > 0) {
+            start = start.next;
+            index--;
+        }
+        return start.value;
     }
 
     @Override
     public T getRecursive(int index) {
-        return null;
+        if(index < 0 || index >= size)
+            return null;
+        return getRecursive(sentinal.next, index);
     }
+
+    private T getRecursive(Node deq, int index) {
+        if (index == 0) {
+            return deq.value;
+        }
+        return getRecursive(deq.next, index - 1);
+    }
+
 }
