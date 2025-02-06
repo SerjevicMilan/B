@@ -81,5 +81,11 @@ public class TestGuitarString  {
         String errorMsg = "Wrong tic value. Try running the testTic method in TestGuitarString.java";
         assertWithMessage(errorMsg).that(s5).isWithin(0.001).of(expected);
     }
+    @Test
+    public void testGuitarStingCreation() {
+        GuitarString S = new GuitarString(100);
+
+        assertThat(S.size()).isEqualTo(441);
+    }
 }
 
