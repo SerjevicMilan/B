@@ -70,7 +70,53 @@ public class ArrayDeque61BTest {
     void getTest() {
          ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
 
-         for(int i = 1; i <= 6; i++)
+         for(int i = 1; i <= 6; i++) {
+             arr1.addLast(i);
+         }
 
+        assertThat(arr1.get(0)).isEqualTo(1);
+        assertThat(arr1.get(5)).isEqualTo(6);
+        assertThat(arr1.get(2)).isEqualTo(3);
+        assertThat(arr1.get(-2)).isEqualTo(null);
+        assertThat(arr1.get(10)).isEqualTo(null);
+
+        //check after resize and remove
     }
+
+    @Test
+    void isEmptySizeTest() {
+        ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
+
+        assertThat(arr1.isEmpty()).isTrue();
+        assertThat(arr1.size()).isEqualTo(0);
+
+
+        for(int i = 1; i <= 6; i++) {
+            arr1.addLast(i);
+        }
+
+        assertThat(arr1.size()).isEqualTo(6);
+        assertThat(arr1.isEmpty()).isFalse();
+
+        // check for remove and resize
+    }
+
+    @Test
+    void removeFirstTest() {
+        ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
+
+        for(int i = 1; i <= 6; i++) {
+            arr1.addLast(i);
+        }
+
+        arr1.removeFirst();
+        assertThat(arr1.toList()).containsExactly(2, 3, 4, 5, 6);
+        arr1.removeFirst();
+        arr1.removeFirst();
+        arr1.removeFirst();
+        arr1.removeFirst();
+        arr1.removeFirst();
+        assertThat(arr1.toList()).containsExactly();
+    }
+
 }
