@@ -61,12 +61,24 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
 
     @Override
     public T removeFirst() {
-        return null;
+        if(size == 0)
+            return null;
+        T reVal = items[Math.floorMod(nextFirst + 1, items.length)];
+        items[Math.floorMod(nextFirst + 1, items.length)] = null;
+        nextFirst++;
+        size--;
+        return reVal;
     }
 
     @Override
     public T removeLast() {
-        return null;
+        if(size == 0)
+            return null;
+        T reVal = items[Math.floorMod(nextLast - 1, items.length)];
+        items[Math.floorMod(nextLast - 1, items.length)] = null;
+        nextLast--;
+        size--;
+        return reVal;
     }
 
     //starting point "nextFirst + 1" + index and mod it so you can circle in array
@@ -79,6 +91,6 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
 
     @Override
     public T getRecursive(int index) {
-        return null;
+        throw new UnsupportedOperationException("No need to implement getRecursive for proj 1b");
     }
 }

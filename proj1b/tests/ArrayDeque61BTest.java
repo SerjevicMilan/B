@@ -80,6 +80,12 @@ public class ArrayDeque61BTest {
         assertThat(arr1.get(-2)).isEqualTo(null);
         assertThat(arr1.get(10)).isEqualTo(null);
 
+        arr1.removeFirst();
+        assertThat(arr1.get(0)).isEqualTo(2);
+
+        arr1.removeLast();
+        assertThat(arr1.get(arr1.size() - 1)).isEqualTo(5);
+
         //check after resize and remove
     }
 
@@ -98,6 +104,24 @@ public class ArrayDeque61BTest {
         assertThat(arr1.size()).isEqualTo(6);
         assertThat(arr1.isEmpty()).isFalse();
 
+        arr1.removeFirst();
+        assertThat(arr1.size()).isEqualTo(5);
+
+        arr1.removeLast();
+        assertThat(arr1.size()).isEqualTo(4);
+
+        for(int i = 0; i < 2; i++) {
+            arr1.removeFirst();
+            arr1.removeLast();
+        }
+        assertThat(arr1.size()).isEqualTo(0);
+
+        arr1.removeFirst();
+        arr1.removeLast();
+        assertThat(arr1.size()).isEqualTo(0);
+
+
+
         // check for remove and resize
     }
 
@@ -111,12 +135,42 @@ public class ArrayDeque61BTest {
 
         arr1.removeFirst();
         assertThat(arr1.toList()).containsExactly(2, 3, 4, 5, 6);
+
         arr1.removeFirst();
         arr1.removeFirst();
+        assertThat(arr1.removeFirst()).isEqualTo(4);
+
         arr1.removeFirst();
-        arr1.removeFirst();
+        assertThat(arr1.toList()).containsExactly(6);
+
         arr1.removeFirst();
         assertThat(arr1.toList()).containsExactly();
+
+        assertThat(arr1.removeFirst()).isEqualTo(null);
+    }
+
+    @Test
+    void removeLastTest() {
+        ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
+
+        for(int i = 1; i <= 6; i++) {
+            arr1.addLast(i);
+        }
+
+        arr1.removeLast();
+        assertThat(arr1.toList()).containsExactly(1, 2, 3, 4, 5);
+
+        arr1.removeLast();
+        arr1.removeLast();
+        assertThat(arr1.removeLast()).isEqualTo(3);
+
+        arr1.removeLast();
+        assertThat(arr1.toList()).containsExactly(1);
+
+        arr1.removeLast();
+        assertThat(arr1.toList()).containsExactly();
+
+        assertThat(arr1.removeLast()).isEqualTo(null);
     }
 
 }
