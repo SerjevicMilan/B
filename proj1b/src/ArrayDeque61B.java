@@ -20,6 +20,9 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
     public void addFirst(T x) {
         if(x == null)
             return;
+
+        if(size == items.length)
+            resizeUp();
         //add resize if size == items.length
 
         items[Math.floorMod(nextFirst, items.length)] = x;
@@ -33,6 +36,8 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
         if(x == null)
             return;
 
+        if(size == items.length)
+            resizeUp();
         //add resize if size == items.length
 
         items[Math.floorMod(nextLast, items.length)] = x;
@@ -63,10 +68,15 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
     public T removeFirst() {
         if(size == 0)
             return null;
+
         T reVal = items[Math.floorMod(nextFirst + 1, items.length)];
         items[Math.floorMod(nextFirst + 1, items.length)] = null;
         nextFirst++;
         size--;
+
+        if (items.length > 8 && (double) size / items.length <= 0.25)
+            resizeDown();
+
         return reVal;
     }
 
@@ -74,10 +84,15 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
     public T removeLast() {
         if(size == 0)
             return null;
+
         T reVal = items[Math.floorMod(nextLast - 1, items.length)];
         items[Math.floorMod(nextLast - 1, items.length)] = null;
         nextLast--;
         size--;
+
+        if (items.length > 8 && (double) size / items.length <= 0.25)
+            resizeDown();
+
         return reVal;
     }
 
@@ -92,5 +107,25 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
     @Override
     public T getRecursive(int index) {
         throw new UnsupportedOperationException("No need to implement getRecursive for proj 1b");
+    }
+
+    private void resizeUp() {
+        T[] newArr =  (T[]) new Object[size * 2];
+        for(int i = 0; i < size; i++) {
+            newArr[i] = get(i);
+        }
+        items = newArr;
+        nextFirst = -1;
+        nextLast = size;
+    }
+
+    private void resizeDown() {
+        T[] newArr =  (T[]) new Object[items.length / 2];
+        for(int i = 0; i < size; i++) {
+            newArr[i] = get(i);
+        }
+        items = newArr;
+        nextFirst = -1;
+        nextLast = size;
     }
 }

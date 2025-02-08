@@ -86,7 +86,22 @@ public class ArrayDeque61BTest {
         arr1.removeLast();
         assertThat(arr1.get(arr1.size() - 1)).isEqualTo(5);
 
-        //check after resize and remove
+        //down are test after resize
+        ArrayDeque61B<Integer> arr2 = new ArrayDeque61B<>();
+
+        for (int i = 1; i <= 20; i++){
+            arr2.addLast(i);
+        }
+        assertThat(arr2.get(19)).isEqualTo(20);
+        assertThat(arr2.get(0)).isEqualTo(1);
+        assertThat(arr2.get(20)).isEqualTo(null);
+
+        for (int i = 1; i <= 14; i++){
+            arr2.removeLast();
+        }
+        assertThat(arr2.get(0)).isEqualTo(1);
+        assertThat(arr2.get(5)).isEqualTo(6);
+        assertThat(arr2.get(6)).isEqualTo(null);
     }
 
     @Test
@@ -120,9 +135,20 @@ public class ArrayDeque61BTest {
         arr1.removeLast();
         assertThat(arr1.size()).isEqualTo(0);
 
+        //down are test after resize
 
+        ArrayDeque61B<Integer> arr2 = new ArrayDeque61B<>();
 
-        // check for remove and resize
+        for (int i = 1; i <= 20; i++){
+            arr2.addLast(i);
+        }
+        assertThat(arr2.size()).isEqualTo(20);
+
+        for (int i = 1; i <= 14; i++){
+            arr2.removeLast();
+        }
+        assertThat(arr2.size()).isEqualTo(6);
+
     }
 
     @Test
@@ -173,4 +199,83 @@ public class ArrayDeque61BTest {
         assertThat(arr1.removeLast()).isEqualTo(null);
     }
 
+    @Test
+    void resizeUpTest(){
+         ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
+
+         for (int i = 1; i <= 9; i++){
+             arr1.addLast(i);
+         }
+         assertThat(arr1.toList()).containsExactly(1,2,3,4,5,6,7,8,9);
+    }
+
+    @Test
+    void resizeDownTest(){
+        ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
+
+        for (int i = 1; i <= 9; i++){
+            arr1.addLast(i);
+        }
+        for (int i = 1; i <= 5; i++){
+            arr1.removeLast();
+        }
+        assertThat(arr1.toList()).containsExactly(1,2,3,4);
+    }
+
+    @Test
+    void circularBufferTest() {
+        ArrayDeque61B<Integer> arr = new ArrayDeque61B<>();
+
+        for (int i = 1; i <= 8; i++) { // Fill up to initial capacity
+            arr.addLast(i);
+        }
+        arr.removeFirst(); // Make space for wraparound
+        arr.addLast(9);
+
+        assertThat(arr.toList()).containsExactly(2, 3, 4, 5, 6, 7, 8, 9);
+    }
+
+    @Test
+    void removeFromEmptyDequeTest() {
+        ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
+
+        // Ensure the deque is empty
+        assertThat(arr1.isEmpty()).isTrue();
+        assertThat(arr1.size()).isEqualTo(0);
+
+        // Try removing from an empty deque
+        assertThat(arr1.removeFirst()).isNull();
+        assertThat(arr1.removeLast()).isNull();
+
+        // Ensure size remains 0 after attempting to remove
+        assertThat(arr1.size()).isEqualTo(0);
+        assertThat(arr1.isEmpty()).isTrue();
+    }
+
+    @Test
+    void resizeAndAccessTest() {
+        ArrayDeque61B<Integer> arr1 = new ArrayDeque61B<>();
+
+        // Step 1: Fill up the deque to trigger resizing up
+        for (int i = 1; i <= 16; i++) {
+            arr1.addLast(i);
+        }
+        assertThat(arr1.size()).isEqualTo(16);
+        assertThat(arr1.get(0)).isEqualTo(1);
+        assertThat(arr1.get(15)).isEqualTo(16);
+
+        // Step 2: Remove elements to trigger resizing down
+        for (int i = 1; i <= 12; i++) {
+            arr1.removeFirst();
+        }
+        assertThat(arr1.size()).isEqualTo(4);
+        assertThat(arr1.get(0)).isEqualTo(13);
+        assertThat(arr1.get(3)).isEqualTo(16);
+
+        // Step 3: Ensure further operations work correctly
+        arr1.addFirst(100);
+        arr1.addLast(200);
+        assertThat(arr1.get(0)).isEqualTo(100);
+        assertThat(arr1.get(5)).isEqualTo(200);
+    }
 }
