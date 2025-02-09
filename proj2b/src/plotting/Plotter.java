@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 
+import java.util.TreeMap;
+import java.util.ArrayList;
+
 public class Plotter {
 
     public static XYChart generateTimeSeriesChart(List<String> words, List<TimeSeries> lts) {
@@ -25,6 +28,22 @@ public class Plotter {
             TimeSeries ts = lts.get(i);
             String word = words.get(i);
             chart.addSeries(word, ts.years(), ts.data());
+        }
+
+        return chart;
+    }
+
+    public static XYChart generateTreeMapChart(List<String> words, List<TreeMap<Integer, Double>> lts) {
+        if (words.size() != lts.size()) {
+            throw new IllegalArgumentException("List of words and List of time series objects must be the same length");
+        }
+
+        XYChart chart = new XYChart(800, 600);
+
+        for (int i = 0; i < words.size(); i += 1) {
+            TreeMap<Integer, Double> tm = lts.get(i);
+            String word = words.get(i);
+            chart.addSeries(word, new ArrayList<>(tm.keySet()), new ArrayList<>(tm.values()));
         }
 
         return chart;

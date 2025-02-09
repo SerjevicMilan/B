@@ -1,4 +1,4 @@
-package main;
+package demo;
 
 import ngrams.NGramMap;
 import ngrams.TimeSeries;
