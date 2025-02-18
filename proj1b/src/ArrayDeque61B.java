@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.lang.Math;
 
@@ -13,6 +14,25 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
         size = 0;
         nextFirst = 3;
         nextLast = 4;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ADIterator();
+    }
+
+    private class ADIterator<T> implements Iterator<T> {
+        private int pos = 0;
+
+        public boolean hasNext() {
+            return pos < size;
+        }
+
+        public T next() {
+            T reItem =(T) get(pos);
+            pos++;
+            return reItem;
+        }
     }
 
     //add first update next position and size
@@ -127,5 +147,32 @@ public class ArrayDeque61B<T> implements Deque61B<T>{
         items = newArr;
         nextFirst = -1;
         nextLast = size;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj instanceof ArrayDeque61B otherObj) {
+            if (this.size != otherObj.size()) {
+                return false;
+            }
+            for (T x : this) {
+                for (int i = 0; i < otherObj.size(); i++){
+                    if (x == otherObj.get(i)) {
+                        break;
+                    }
+                    if (i == otherObj.size() - 1)
+                        return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return toList().toString();
     }
 }
