@@ -343,5 +343,37 @@ public class LinkedListDeque61BTest {
         assertThat(lld1).isEqualTo(lld2);
     }
 
+    @Test
+    public void testEqualEmptyArray61B() {
+        Deque61B<String> lld1 = new LinkedListDeque61B<>();
+        Deque61B<String> lld2 = new LinkedListDeque61B<>();
+
+        assertThat(lld1).isEqualTo(lld2);
+    }
+
+    @Test
+    public void testNotEqualNullArray61B() {
+        Deque61B<String> lld1 = new LinkedListDeque61B<>();
+        Deque61B<String> lld2 = new LinkedListDeque61B<>();
+
+        assertThat(lld1).isNotEqualTo(null);
+    }
+
+    @Test
+    public void testNotEqualArray61B() {
+        Deque61B<String> lld1 = new LinkedListDeque61B<>();
+        Deque61B<String> lld2 = new LinkedListDeque61B<>();
+
+        lld1.addLast("front");
+        lld1.addLast("middle");
+        lld1.addLast("back");
+
+        lld2.addLast("front");
+        lld2.addLast("between");
+        lld2.addLast("back");
+
+        assertThat(lld1).isNotEqualTo(lld2);
+    }
+
 }
 

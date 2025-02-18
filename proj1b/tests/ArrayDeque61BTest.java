@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 public  class ArrayDeque61BTest {
@@ -277,6 +278,64 @@ public  class ArrayDeque61BTest {
         arr1.addLast(200);
         Truth.assertThat(arr1.get(0)).isEqualTo(100);
         Truth.assertThat(arr1.get(5)).isEqualTo(200);
+    }
+
+    @Test
+    public void addLastTestBasicWithoutToList() {
+        Deque61B<String> arr1 = new ArrayDeque61B<>();
+
+        arr1.addLast("front"); // after this call we expect: ["front"]
+        arr1.addLast("middle"); // after this call we expect: ["front", "middle"]
+        arr1.addLast("back"); // after this call we expect: ["front", "middle", "back"]
+        assertThat(arr1).containsExactly("front", "middle", "back");
+    }
+
+    @Test
+    public void testEqualArray61B() {
+        Deque61B<String> arr1 = new ArrayDeque61B<>();
+        Deque61B<String> arr2 = new ArrayDeque61B<>();
+
+        arr1.addLast("front");
+        arr1.addLast("middle");
+        arr1.addLast("back");
+
+        arr2.addLast("front");
+        arr2.addLast("middle");
+        arr2.addLast("back");
+
+        assertThat(arr1).isEqualTo(arr2);
+    }
+
+    @Test
+    public void testEqualEmptyArray61B() {
+        Deque61B<String> arr1 = new ArrayDeque61B<>();
+        Deque61B<String> arr2 = new ArrayDeque61B<>();
+
+        assertThat(arr1).isEqualTo(arr2);
+    }
+
+    @Test
+    public void testNotEqualNullArray61B() {
+        Deque61B<String> arr1 = new ArrayDeque61B<>();
+        Deque61B<String> arr2 = new ArrayDeque61B<>();
+
+        assertThat(arr1).isNotEqualTo(null);
+    }
+
+    @Test
+    public void testNotEqualArray61B() {
+        Deque61B<String> arr1 = new ArrayDeque61B<>();
+        Deque61B<String> arr2 = new ArrayDeque61B<>();
+
+        arr1.addLast("front");
+        arr1.addLast("middle");
+        arr1.addLast("back");
+
+        arr2.addLast("front");
+        arr2.addLast("between");
+        arr2.addLast("back");
+
+        assertThat(arr1).isNotEqualTo(arr2);
     }
 }
 
