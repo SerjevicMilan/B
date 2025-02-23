@@ -86,6 +86,60 @@ public class UnionFindTest {
      * of all methods in your implementation.
      */
 
+    @Test
+    public void constructTest() {
+        UnionFind uf = new UnionFind(4);
+
+        //check constructor and find basic state
+        assertThat(uf.find(0)).isEqualTo(0);
+        assertThat(uf.find(1)).isEqualTo(1);
+        assertThat(uf.find(2)).isEqualTo(2);
+        assertThat(uf.find(3)).isEqualTo(3);
+
+        assertThat(uf.connected(0, 1)).isFalse();
+        assertThat(uf.connected(1, 3)).isFalse();
+
+        assertThat(uf.sizeOf(0)).isEqualTo(1);
+
+    }
+
+    @Test
+    public void invalidArgTest() {
+        // negative input creates empty set
+        UnionFind uf = new UnionFind(-4);
+        UnionFind uf1 = new UnionFind(4);
+        try {
+            //accessing empty array
+            assertThat(uf.find(0)).isEqualTo(0);
+            assertThat(uf.sizeOf(1)).isEqualTo(1);
+
+            // trying to access out of bonds
+            assertThat(uf1.find(5)).isEqualTo(5);
+            assertThat(uf1.sizeOf(-1)).isEqualTo(-1);
+
+        }
+        catch (IllegalArgumentException e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Test
+    public void customUnionTest() {
+        UnionFind uf = new UnionFind(6);
+
+        uf.union(0, 1);
+        uf.union(2, 3);
+        assertThat(uf.connected(0, 1)).isTrue();
+
+        uf.union(0, 2);
+        assertThat(uf.connected(0, 2)).isTrue();
+        assertThat(uf.find(0)).isEqualTo(3);
+
+        uf.union(4, 5);
+        uf.union(0, 4);
+        assertThat(uf.connected(0, 4)).isTrue();
+        assertThat(uf.find(0)).isEqualTo(3);
+    }
 }
 
 
