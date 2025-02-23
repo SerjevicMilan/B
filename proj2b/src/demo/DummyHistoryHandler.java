@@ -1,4 +1,4 @@
-package main;
+package demo;
 
 import browser.NgordnetQuery;
 import browser.NgordnetQueryHandler;
