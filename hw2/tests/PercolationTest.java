@@ -81,8 +81,25 @@ public class PercolationTest {
     // TODO: Using the given tests above as a template,
     //       write some more tests and delete the fail() line
     @Test
-    public void yourFirstTestHere() {
-        fail("Did you write your own tests?");
+    public void openTest() {
+        int N = 3;
+        Percolation p = new Percolation(N);
+        p.open(1, 1);
+        p.open(2, 2);
+        Cell[][] expectedState = {
+                {Cell.CLOSED, Cell.CLOSED, Cell.CLOSED},
+                {Cell.CLOSED, Cell.OPEN, Cell.CLOSED},
+                {Cell.CLOSED, Cell.CLOSED, Cell.OPEN}
+        };
+        assertThat(getState(N, p)).isEqualTo(expectedState);
+
+        try {
+            p.open(-1, 3);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+
+
     }
 
 }
