@@ -16,12 +16,47 @@ public class Percolation {
         size = N;
     }
 
+    //conv cords of 2d arr to pos for Uf
+    private int convertToPosition(int row, int col) {
+        return row * size + col;
+    }
+
+    //connect touching positions
+    private void connect(int p1, int p2) {
+        noVbUf.union(p1, p2);
+        VbUf.union(p1, p2);
+    }
+
+    //check if connecting pos possible and conn
+    private void merge(int row, int col) {
+        int pos =  convertToPosition(row, col);
+        if (row == 0) { //if first row connect virtual top with cur pos
+            connect(pos, size);
+        }
+        if (row == size - 1) {//if last row connect with virtual bot
+            VbUf.union(pos, size + 1);
+        }
+        if (row > 0 && isOpen(row - 1, col)) {//check if we can conn to top pos
+            connect(pos, convertToPosition(row - 1, col));
+        }
+        if (col > 0 && isOpen(row, col - 1)) {//check if we can conn to left pos
+            connect(pos, convertToPosition(row, col - 1));
+        }
+        if (row < size - 1 && isOpen(row + 1, col)) {//check if we can conn to bott pos
+            connect(pos, convertToPosition(row + 1, col));
+        }
+        if (col < size - 1 && isOpen(row, col + 1)) {//check if we can conn to right pos
+            connect(pos, convertToPosition(row, col + 1));
+        }
+    }
+
     public void open(int row, int col) {
         // TODO: Fill in this method.
         if (row < 0 || row >= size || col < 0 || col >= size) {
             throw new IllegalArgumentException();
         }
         grid[row][col] = true;
+        merge(row, col);//connect if possible
     }
 
     public boolean isOpen(int row, int col) {
@@ -29,12 +64,15 @@ public class Percolation {
         if (row < 0 || row >= size || col < 0 || col >= size) {
             throw new IllegalArgumentException();
         }
-            return grid[row][col];
+        if (isFull(row, col)) {
+            return false;
+        }
+        return grid[row][col];
     }
 
     public boolean isFull(int row, int col) {
         // TODO: Fill in this method.
-        return false;
+        return noVbUf.connected(convertToPosition(row, col), size);// size is == to virtual top
     }
 
     public int numberOfOpenSites() {
