@@ -7,6 +7,8 @@ public class Percolation {
     private WeightedQuickUnionUF noVbUf;//without virtual bottom
     private boolean[][] grid;
     private int size;
+    private int vTop;
+    private int vBot;
 
     public Percolation(int N) {
         // TODO: Fill in this constructor.
@@ -14,6 +16,8 @@ public class Percolation {
         VbUf = new WeightedQuickUnionUF(N * N + 2);
         noVbUf = new WeightedQuickUnionUF(N * N + 1);
         size = N;
+        vTop = N * N;
+        vBot = N * N + 1;
     }
 
     //conv cords of 2d arr to pos for Uf
@@ -31,10 +35,10 @@ public class Percolation {
     private void merge(int row, int col) {
         int pos =  convertToPosition(row, col);
         if (row == 0) { //if first row connect virtual top with cur pos
-            connect(pos, size);
+            connect(pos, vTop);
         }
         if (row == size - 1) {//if last row connect with virtual bot
-            VbUf.union(pos, size + 1);
+            VbUf.union(pos, vBot);
         }
         if (row > 0 && isOpen(row - 1, col)) {//check if we can conn to top pos
             connect(pos, convertToPosition(row - 1, col));
@@ -64,15 +68,12 @@ public class Percolation {
         if (row < 0 || row >= size || col < 0 || col >= size) {
             throw new IllegalArgumentException();
         }
-        if (isFull(row, col)) {
-            return false;
-        }
         return grid[row][col];
     }
 
     public boolean isFull(int row, int col) {
         // TODO: Fill in this method.
-        return noVbUf.connected(convertToPosition(row, col), size);// size is == to virtual top
+        return noVbUf.connected(convertToPosition(row, col), vTop);// size is == to virtual top
     }
 
     public int numberOfOpenSites() {
