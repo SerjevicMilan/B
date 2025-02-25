@@ -9,9 +9,13 @@ public class Percolation {
     private int size;
     private int vTop;
     private int vBot;
+    private int openCount = 0;
 
     public Percolation(int N) {
         // TODO: Fill in this constructor.
+        if (N <= 0) {
+            throw new IllegalArgumentException();
+        }
         grid = new boolean[N][N];
         VbUf = new WeightedQuickUnionUF(N * N + 2);
         noVbUf = new WeightedQuickUnionUF(N * N + 1);
@@ -60,6 +64,7 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
         grid[row][col] = true;
+        openCount += 1;
         merge(row, col);//connect if possible
     }
 
@@ -73,18 +78,22 @@ public class Percolation {
 
     public boolean isFull(int row, int col) {
         // TODO: Fill in this method.
+        if (row < 0 || row >= size || col < 0 || col >= size) {
+            throw new IllegalArgumentException();
+        }
         return noVbUf.connected(convertToPosition(row, col), vTop);// size is == to virtual top
     }
 
     public int numberOfOpenSites() {
         // TODO: Fill in this method.
-        return 0;
+        return openCount;
     }
 
     public boolean percolates() {
         // TODO: Fill in this method.
-        return false;
+        return VbUf.connected(vBot, vTop);
     }
+
 
     // TODO: Add any useful helper methods (we highly recommend this!).
     // TODO: Remove all TODO comments before submitting.

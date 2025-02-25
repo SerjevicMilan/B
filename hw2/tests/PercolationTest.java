@@ -2,6 +2,9 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;import edu.princeton.cs.algs4.Stopwatch;
+
+
 
 public class PercolationTest {
 
@@ -99,7 +102,92 @@ public class PercolationTest {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
 
+        N = 5;
+        p = new Percolation(N);
+        // open sites at (r, c) = (0, 1), (2, 0), (3, 1), etc. (0, 0) is top-left
+        int[][] openSites = {
+                {0, 0},
+                {0, 1},
+                {1, 4},
+                {2, 0},
+                {3, 0},
+                {3, 1},
+                {4, 1},
+                {4, 4},
+                {1, 0},
+                {1, 1}
+        };
+        Cell[][] eState = {
+                {Cell.FULL, Cell.FULL, Cell.CLOSED, Cell.CLOSED, Cell.CLOSED},
+                {Cell.FULL, Cell.FULL, Cell.CLOSED, Cell.CLOSED, Cell.OPEN},
+                {Cell.FULL, Cell.CLOSED, Cell.CLOSED, Cell.CLOSED, Cell.CLOSED},
+                {Cell.FULL, Cell.FULL, Cell.CLOSED, Cell.CLOSED, Cell.CLOSED},
+                {Cell.CLOSED, Cell.FULL, Cell.CLOSED, Cell.CLOSED, Cell.OPEN}
+        };
+        for (int[] site : openSites) {
+            p.open(site[0], site[1]);
+        }
+        assertThat(getState(N, p)).isEqualTo(eState);
+        assertThat(p.percolates()).isTrue();
 
+    }
+
+    @Test
+    public void testExceptionOnInvalidOpen() {
+        int N = 5;
+        Percolation p = new Percolation(N);
+        assertThrows(IllegalArgumentException.class, () -> p.open(-1, 0));
+        assertThrows(IllegalArgumentException.class, () -> p.open(0, -1));
+        assertThrows(IllegalArgumentException.class, () -> p.open(N, N));
+    }
+
+    @Test
+    public void testEmptyGrid() {
+        assertThrows(IllegalArgumentException.class, () -> new Percolation(0));
+    }
+
+    @Test
+    public void testNegativeGridSize() {
+        assertThrows(IllegalArgumentException.class, () -> new Percolation(-5));
+    }
+
+    @Test
+    public void testBoundary() {
+        int N = 5;
+        Percolation p = new Percolation(N);
+        p.open(0, 0); // Top-left corner
+        p.open(4, 4); // Bottom-right corner
+        assertThat(p.isOpen(0, 0)).isTrue();
+        assertThat(p.isOpen(4, 4)).isTrue();
+        assertThat(p.isFull(0, 0)).isTrue();
+        assertThat(p.isFull(4, 4)).isFalse();
+    }
+
+    @Test
+    public void stressTestLargeGrid() {
+        int N = 1000;
+        Percolation p = new Percolation(N);
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                p.open(i, j);
+            }
+        }
+        assertThat(p.percolates()).isTrue();
+    }
+
+    @Test
+    public void performanceTestWithStopwatch() {
+        int N = 1000;
+        Stopwatch stopwatch = new Stopwatch();
+        Percolation p = new Percolation(N);
+        while (!p.percolates()) {
+            int row = (int) (Math.random() * N);
+            int col = (int) (Math.random() * N);
+            p.open(row, col);
+        }
+        double elapsed = stopwatch.elapsedTime();
+        System.out.printf("Percolation on a %dx%d grid took %.2f seconds.%n", N, N, elapsed);
+        assertThat(p.percolates()).isTrue();
     }
 
 }
