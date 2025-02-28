@@ -1,6 +1,7 @@
 import java.util.Iterator;
 import java.util.Set;
 
+
 //implementation of BSTMap
 public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
     private BSTNode root;
@@ -55,6 +56,7 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         return get(key, root);
     }
 
+    //matching key and returning val or returning null
     private V get(K key, BSTNode root) {
         if (root == null) {//leaf node or empty root
             return null;
@@ -76,6 +78,7 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
         return containsKey(key, root);
     }
 
+    //if key matched return true if leaf is reached return false
     private boolean containsKey(K key, BSTNode root) {
         if (root == null) {//leaf node or empty root
             return false;
@@ -101,10 +104,6 @@ public class BSTMap<K extends Comparable<K> , V> implements Map61B<K, V>{
     public void clear() {
         root = null;
         size = 0;
-    }
-
-    void printInOrder() {
-        return;
     }
 
     @Override
