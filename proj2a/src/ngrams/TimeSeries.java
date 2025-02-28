@@ -1,5 +1,6 @@
 package ngrams;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -31,6 +32,13 @@ public class TimeSeries extends TreeMap<Integer, Double> {
     public TimeSeries(TimeSeries ts, int startYear, int endYear) {
         super();
         // TODO: Fill in this constructor.
+        if (ts != null && startYear - endYear <= 0) {// check for bad input
+            for (int year : ts.years()) {
+                if (year >= startYear && year <= endYear) {
+                    this.put(year, ts.get(year));
+                }
+            }
+        }
     }
 
     /**
@@ -38,7 +46,11 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public List<Integer> years() {
         // TODO: Fill in this method.
-        return null;
+        List<Integer> years = new ArrayList<>();
+        for (int year : this.keySet()) {
+            years.add(year);
+        }
+        return years;
     }
 
     /**
@@ -47,7 +59,11 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public List<Double> data() {
         // TODO: Fill in this method.
-        return null;
+        List<Double> dataArr = new ArrayList<>();
+        for (int year : this.years()) {// if no year return empty arr
+            dataArr.add(this.get(year));//get data for every year and put it into arr
+        }
+        return dataArr;
     }
 
     /**
@@ -61,7 +77,26 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries plus(TimeSeries ts) {
         // TODO: Fill in this method.
-        return null;
+        //create return ts and var for data per year in case we have matching years
+        TimeSeries tsPlus = new TimeSeries();
+        Double data;
+
+        //add add everything from ts if not null
+        if (ts != null) {
+            for (int year : ts.years()) {
+                tsPlus.put(year, ts.get(year));
+            }
+        }
+
+        //add everything from this to return one and sum data for matching years
+        for (int year : this.years()) {
+            data = this.get(year);
+            if (tsPlus.containsKey(year)) {//overwrite matching years data
+                data += ts.get(year);
+            }
+            tsPlus.put(year, data);
+        }
+        return tsPlus;
     }
 
     /**
@@ -75,9 +110,17 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries dividedBy(TimeSeries ts) {
         // TODO: Fill in this method.
-        return null;
+        TimeSeries tsDiv = new TimeSeries();
+
+        for (int year : years()) {
+            if (!ts.containsKey(year)) {
+                throw new IllegalArgumentException("ts has mismatched years");
+            }
+            tsDiv.put(year, this.get(year) / ts.get(year));
+        }
+
+        return tsDiv;
     }
 
-    // TODO: Add any private helper methods.
-    // TODO: Remove all TODO comments before submitting.
+
 }
