@@ -1,11 +1,10 @@
+import net.sf.saxon.expr.Component;
 import ngrams.NGramMap;
 import ngrams.TimeSeries;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static utils.Utils.*;
 import static com.google.common.truth.Truth.assertThat;
@@ -61,6 +60,7 @@ public class NGramMapTest {
         TimeSeries academicWeight = ngm.weightHistory("academic", 1999, 2010);
         assertThat(academicWeight.get(1999)).isWithin(1E-7).of(969087.0 / 22668397698.0);
     }
+
     @Test
     public void testOnLargeFile() {
         // creates an NGramMap from a large dataset
@@ -89,6 +89,20 @@ public class NGramMapTest {
 
         double expectedFishPlusDogWeight1865 = (136497.0 + 75819.0) / 2563919231.0;
         assertThat(fishPlusDogWeight.get(1865)).isWithin(1E-10).of(expectedFishPlusDogWeight1865);
+    }
+
+    @Test
+    public void consTest() {
+        NGramMap ngm = new NGramMap(SHORT_WORDS_FILE,
+                TOTAL_COUNTS_FILE);
+
+        List<Integer> expectedYears = new ArrayList<>
+                (Arrays.asList(2007, 2008));
+
+        assertThat(ngm.countHistory("airport").years()).isEqualTo(expectedYears);
+        assertThat(ngm.countHistory("bird").years()).isEqualTo(Arrays.asList());
+        assertThat(ngm.totalCountHistory().get(1484)).isEqualTo(6.0);
+
     }
 
 }  
