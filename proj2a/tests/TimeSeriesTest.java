@@ -208,4 +208,59 @@ public class TimeSeriesTest {
             assertThat(proportions.data().get(i)).isWithin(1E-10).of(expectedTotal.get(i));
         }
     }
+
+    @Test
+    public void testEmptyDividedBy() {
+        TimeSeries ts1 = new TimeSeries();
+        TimeSeries ts2 = new TimeSeries();
+        TimeSeries result = ts1.dividedBy(ts2);
+        assertThat(result.years()).isEmpty();
+    }
+
+    @Test
+    public void testPlusOverlappingYears() {
+        TimeSeries ts1 = new TimeSeries();
+        ts1.put(2000, 50.0);
+        ts1.put(2001, 100.0);
+        ts1.put(2002, 150.0);
+
+        TimeSeries ts2 = new TimeSeries();
+        ts2.put(2001, 200.0);
+        ts2.put(2002, 300.0);
+        ts2.put(2003, 400.0);
+
+        TimeSeries result = ts1.plus(ts2);
+        assertThat(result.get(2000)).isEqualTo(50.0);
+        assertThat(result.get(2001)).isEqualTo(300.0);
+        assertThat(result.get(2002)).isEqualTo(450.0);
+        assertThat(result.get(2003)).isEqualTo(400.0);
+    }
+
+    @Test
+    public void testYearsOrderIndependence() {
+        TimeSeries ts = new TimeSeries();
+        ts.put(2002, 200.0);
+        ts.put(2000, 50.0);
+        ts.put(2001, 100.0);
+
+        List<Integer> expectedYears = Arrays.asList(2000, 2001, 2002);
+        assertThat(ts.years()).isEqualTo(expectedYears);
+    }
+
+    @Test
+    public void testDividedByZero() {
+        TimeSeries ts1 = new TimeSeries();
+        ts1.put(2000, 100.0);
+        ts1.put(2001, 200.0);
+
+        TimeSeries ts2 = new TimeSeries();
+        ts2.put(2000, 0.0); // Division by zero scenario
+        ts2.put(2001, 50.0);
+
+        try {
+            ts1.dividedBy(ts2);
+        } catch (ArithmeticException e) {
+            assertThat(e).isInstanceOf(ArithmeticException.class);
+        }
+    }
 } 

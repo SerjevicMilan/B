@@ -125,4 +125,39 @@ public class NGramMapTest {
         assertThat(ngm.summedWeightHistory(wordCollection).get(2007)).isWithin(1E-10).of((175702 + 697645) / 28307904288.0);
     }
 
+    @Test
+    public void testCountHistoryWordNotFound() {
+        NGramMap ngm = new NGramMap(SHORT_WORDS_FILE, TOTAL_COUNTS_FILE);
+        TimeSeries result = ngm.countHistory("nonexistentword");
+        assertThat(result.years()).isEmpty();
+    }
+
+    @Test
+    public void testTotalCountHistoryForMissingYear() {
+        NGramMap ngm = new NGramMap(SHORT_WORDS_FILE, TOTAL_COUNTS_FILE);
+        assertThat(ngm.totalCountHistory().get(3000)).isEqualTo(null);
+    }
+
+    @Test
+    public void testWeightHistoryWithExtremeYears() {
+        NGramMap ngm = new NGramMap(SHORT_WORDS_FILE, TOTAL_COUNTS_FILE);
+        TimeSeries result = ngm.weightHistory("economy", 1400, 2100);
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    public void testSummedWeightHistoryWithMissingWords() {
+        NGramMap ngm = new NGramMap(SHORT_WORDS_FILE, TOTAL_COUNTS_FILE);
+        List<String> words = Arrays.asList("existentword", "missingword");
+        TimeSeries result = ngm.summedWeightHistory(words);
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    public void testSummedWeightHistoryEmptyCollection() {
+        NGramMap ngm = new NGramMap(SHORT_WORDS_FILE, TOTAL_COUNTS_FILE);
+        List<String> words = new ArrayList<>();
+        TimeSeries result = ngm.summedWeightHistory(words);
+        assertThat(result.years()).isEmpty();
+    }
 }  
