@@ -1,13 +1,13 @@
-import net.sf.saxon.expr.Component;
 import ngrams.NGramMap;
 import ngrams.TimeSeries;
-
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static utils.Utils.*;
 import static com.google.common.truth.Truth.assertThat;
+import static utils.Utils.*;
 
 /** Unit Tests for the NGramMap class.
  *  @author Josh Hug
@@ -99,10 +99,30 @@ public class NGramMapTest {
         List<Integer> expectedYears = new ArrayList<>
                 (Arrays.asList(2007, 2008));
 
+        //test if constructor stored data correctly
         assertThat(ngm.countHistory("airport").years()).isEqualTo(expectedYears);
-        assertThat(ngm.countHistory("bird").years()).isEqualTo(Arrays.asList());
-        assertThat(ngm.totalCountHistory().get(1484)).isEqualTo(6.0);
+        assertThat(ngm.countHistory("bird").years()).isEqualTo(Arrays.asList());//if data missing should return empty
+        assertThat(ngm.countHistory(null).years()).isEqualTo(Arrays.asList());//if data missing should return empty
 
+        assertThat(ngm.totalCountHistory().get(1484)).isEqualTo(6.0);//testing if total count implamented cor
+
+        //check if weightedHistory works
+        assertThat(ngm.weightHistory("airport").get(2007)).isWithin(1E-10).of(175702 / 28307904288.0);
+
+        List wordCollection = new ArrayList();
+        wordCollection.add("airport");
+        wordCollection.add("request");
+
+        //test sum history
+        assertThat(ngm.summedWeightHistory(wordCollection).get(2007)).isWithin(1E-10).of((175702 + 697645) / 28307904288.0);
+        assertThat(ngm.summedWeightHistory(wordCollection).get(2006)).isWithin(1E-10).of(677820 / 27695491774.0);
+        //test for empty input or not stored year
+        assertThat(ngm.summedWeightHistory(wordCollection).get(2000)).isEqualTo(null);
+        assertThat(ngm.summedWeightHistory(new ArrayList<>()).get(2004)).isEqualTo(null);
+        assertThat(ngm.summedWeightHistory(null).get(2004)).isEqualTo(null);
+
+        wordCollection.add(null);
+        assertThat(ngm.summedWeightHistory(wordCollection).get(2007)).isWithin(1E-10).of((175702 + 697645) / 28307904288.0);
     }
 
 }  

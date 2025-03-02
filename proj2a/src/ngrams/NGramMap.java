@@ -66,7 +66,7 @@ public class NGramMap {
         if (wordsFilename == null)
             throw new IllegalArgumentException("no file name arg");
         //create new map and start reading from file
-        Map<String, TimeSeries> wm = new HashMap<>();
+        Map<String, TimeSeries> wm = new TreeMap<>();
         In in = new In(wordsFilename);
         if (!in.exists()) {
             throw new IllegalArgumentException("can't find file");
@@ -117,6 +117,8 @@ public class NGramMap {
      */
     public TimeSeries countHistory(String word, int startYear, int endYear) {
         // TODO: Fill in this method.
+        if(word == null || startYear - endYear > 0)
+            return new TimeSeries();
         return new TimeSeries(wordsMap.get(word), startYear, endYear);
     }
 
@@ -170,11 +172,17 @@ public class NGramMap {
         // TODO: Fill in this method.
         TimeSeries returnTs = new TimeSeries();
         TimeSeries ts;
+
+        if(words == null || startYear - endYear > 0)
+            return returnTs;
+
         for (String word : words) {
-            ts = new TimeSeries(wordsMap.get(word), startYear, endYear);
-            returnTs.plus(ts);
+            if (word == null)
+                continue;
+            ts = new TimeSeries(wordsMap.get(word), startYear, endYear);//get new ts for every word in year range
+            returnTs = ts.plus(returnTs);// update sum of all words per year
         }
-        return returnTs;
+        return returnTs.dividedBy(wordCountTs);// div sum of words by total count of words per year
     }
 
     /**
