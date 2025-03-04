@@ -306,6 +306,7 @@ public class TestRedBlackTree {
         rbtree.insert(1);
         rbtree.insert(2);
 
+
         /*
         LLRB Tree Representation:
             (5)
@@ -468,4 +469,15 @@ public class TestRedBlackTree {
     private int callsToFlipColors = 0;
     private int callsToRotateRight = 0;
     private int callsToRotateLeft = 0;
+
+    @Test
+    public void testFlipColor() {
+        RedBlackTree<Integer> rbtree = new TestableRedBlackTree();
+        rbtree.insert(10);
+        rbtree.insert(5);
+        rbtree.insert(15);
+
+        rbtree.flipColors(rbtree.root);
+        assertThat(rbtree.root.isBlack).isFalse();
+    }
 }
