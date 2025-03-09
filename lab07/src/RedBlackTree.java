@@ -51,6 +51,13 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     void flipColors(RBTreeNode<T> node) {
         // TODO: YOUR CODE HERE
+        if (node == null)
+            return;
+        if (node.left != null)
+            node.left.isBlack = !node.left.isBlack;
+        if (node.right != null)
+            node.right.isBlack = !node.right.isBlack;
+        node.isBlack = !node.isBlack;
     }
 
     /**
@@ -62,7 +69,17 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
         // TODO: YOUR CODE HERE
-        return null;
+        RBTreeNode<T> swapNode;
+        swapNode = node.left;
+        node.left = null;
+        if(swapNode.right != null) {// swap most right on left
+            node.left = swapNode.right;
+        }
+        swapNode.right = node;
+        swapNode.isBlack = !swapNode.isBlack;
+        node.isBlack = !node.isBlack;
+
+        return swapNode;
     }
 
     /**
@@ -74,7 +91,18 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
         // TODO: YOUR CODE HERE
-        return null;
+        RBTreeNode<T> swapNode;
+        swapNode = node.right;
+        node.right = null;
+        if (swapNode.left != null) {//swap most left on the right
+           node.right = swapNode.left;
+        }
+        swapNode.left = node;
+        if (!(!swapNode.isBlack && !node.isBlack)) { //if both red dont change colors
+            swapNode.isBlack = !swapNode.isBlack;
+            node.isBlack = !node.isBlack;
+        }
+        return swapNode;
     }
 
     /**
@@ -106,16 +134,46 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     private RBTreeNode<T> insert(RBTreeNode<T> node, T item) {
         // TODO: Insert (return) new red leaf node.
+        if (node == null)
+            return new RBTreeNode<T>(false, item);
 
-        // TODO: Handle normal binary search tree insertion.
-
+        if (node.left == null) { // add red color node
+            node = insertNewLeaf(node, item);
+        }
+        else {//traverse tree
+            node = btsInsert(node, item);
+        }
         // TODO: Rotate left operation
-
+        if (node.right != null && !node.right.isBlack && (node.left == null || node.left.isBlack)) {//if right is red
+            node = rotateLeft(node);
+        }
         // TODO: Rotate right operation
-
+        if (node.left.left != null  && !node.left.left.isBlack && !node.left.isBlack) {// if two red nodes on left
+            node = rotateRight(node);
+        }
         // TODO: Color flip
+        if (node.right != null && !node.left.isBlack && !node.right.isBlack) { // both children nodes red
+            flipColors(node);
+        }
 
-        return null; //fix this return statement
+        return node; //fix this return statement
     }
 
+    private RBTreeNode<T> insertNewLeaf(RBTreeNode<T> node, T item) {
+        if (node.item.compareTo(item) >= 0)
+            node.left = new RBTreeNode<>(false, item);
+        else
+            node.right = new RBTreeNode<>(false, item);
+        return node;
+    }
+
+    private RBTreeNode<T> btsInsert(RBTreeNode<T> node, T item) {
+        if (node.item.compareTo(item) >= 0) {
+            node.left = insert(node.left, item);
+        }
+        else {
+            node.right = insert(node.right, item);
+        }
+        return node;
+    }
 }
