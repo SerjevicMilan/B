@@ -30,7 +30,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             if (key == null || this.key.getClass() != key.getClass())
                 return false;
             K k = (K) key;
-            if (this.key == k)
+            if (this.key.equals(k))
                 return true;
             return false;
         }
@@ -95,6 +95,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public void put(K key, V value) {
+        if ((double)  size / Capacity >= loadFactor)
+            resize();
         Node n = createNode(key, value);
         put(reduce(key), n);
     }
@@ -158,10 +160,29 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return size;
     }
 
+    private Collection[] createBuckets() {
+        return new Collection[Capacity];
+    }
+
     @Override
     public void clear() {
-        for (int i = 0; i < size; size++)
-            buckets[i] = null;
+        buckets = createBuckets();
+        size = 0;
+    }
+
+    private void resize() {
+        Capacity *= 2;
+        Collection[] oldBuckets = buckets;
+        buckets = createBuckets();
+        for (int i = 0; i < size; i++) {
+            Collection<Node> bucket = oldBuckets[i];
+            if (bucket == null)
+                continue;
+            for (Node node : bucket) {
+                size -= 1;
+                put(node.key, node.value);
+            }
+        }
     }
 
     @Override
