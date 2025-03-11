@@ -6,13 +6,14 @@ import java.util.List;
 
 /*
 custom graph  limited implementation
+of Directed Acyclic Graph
  */
-public class myGraph {
+public class MyGraph {
     //hashMap for storing graph
     private HashMap<Integer, Node> Graph;
 
     //init graph
-    public myGraph () {
+    public MyGraph() {
         Graph = new HashMap<>();
     }
 
@@ -30,7 +31,7 @@ public class myGraph {
     new vortice
      */
     public  void addNode(int value) {
-        if (value < 0)
+        if (value < 0)//input cant be negative
             return;
         Graph.put(value, new Node());
     }
@@ -41,7 +42,7 @@ public class myGraph {
     key for neighbor in hashMap
      */
     public void addNeighbor(int base, int adjacent) {
-        if (base < 0 || base > Graph.size() || adjacent < 0 || adjacent > Graph.size())
+        if (base < 0 || base > Graph.size() || adjacent < 0 || adjacent > Graph.size())//check for bad input
             return ;
         Graph.get(base).adjacentNodes.add(adjacent);
     }
@@ -55,16 +56,32 @@ public class myGraph {
     List of integers representing vortices
      */
     public List<Integer> getAdjacent(int v) {
+        if (v < 0 || v > Graph.size())
+            return new ArrayList<>();
         return new ArrayList<Integer>(Graph.get(v).adjacentNodes);
     }
 
+    /*
+    check if v1 node has v2 for a neighbor
+    @param v1
+    key for graph(hashmap)
+    @param v2
+    key for graph as well
+    @return
+    if connected return true otherwise false
+     */
     public boolean isConnected(int v1, int v2) {
-        if (v1 < 0 || v1 > Graph.size() || v2 < 0 || v2 > Graph.size())
+        if (v1 < 0 || v1 > Graph.size() || v2 < 0 || v2 > Graph.size())//check for bad input
             return false;
         return Graph.get(v1).adjacentNodes.contains(v2);
     }
 
-
+    /*
+    gets all keys from HashMap(Graph)
+    and add them to a list
+    @return
+    List of Integers
+     */
     public List<Integer> toList() {
         List<Integer> list = new ArrayList();
         for(int k : Graph.keySet()) {

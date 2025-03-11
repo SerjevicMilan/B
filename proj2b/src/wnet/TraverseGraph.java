@@ -5,7 +5,7 @@ import java.util.List;
 /*
 Adds Graph attribute and has findHyponyms function
  */
-public class traverseGraph {
+public class TraverseGraph {
     //myGraph mg;
 
 
