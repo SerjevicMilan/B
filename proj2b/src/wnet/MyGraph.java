@@ -12,6 +12,8 @@ public class MyGraph {
     //hashMap for storing graph
     private HashMap<Integer, Node> Graph;
 
+    private int size = 0;
+
     //init graph
     public MyGraph() {
         Graph = new HashMap<>();
@@ -34,6 +36,7 @@ public class MyGraph {
         if (value < 0)//input cant be negative
             return;
         Graph.put(value, new Node());
+        size += 1;
     }
 
     /*
@@ -43,7 +46,10 @@ public class MyGraph {
      */
     public void addNeighbor(int base, int adjacent) {
         if (base < 0 || base > Graph.size() || adjacent < 0 || adjacent > Graph.size())//check for bad input
-            return ;
+            throw new IllegalArgumentException("nodes are not in graph");
+        if (!Graph.containsKey(base) || !Graph.containsKey(adjacent))
+            throw new IllegalArgumentException("nodes are not in graph");
+
         Graph.get(base).adjacentNodes.add(adjacent);
     }
 
@@ -88,5 +94,10 @@ public class MyGraph {
             list.add(k);
         }
         return list;
+    }
+
+    //return size of a graph
+    public int size() {
+        return size;
     }
 }

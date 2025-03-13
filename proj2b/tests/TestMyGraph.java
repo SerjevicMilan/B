@@ -5,6 +5,8 @@ import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 public class TestMyGraph {
 
@@ -12,10 +14,15 @@ public class TestMyGraph {
     public void TestGraph() {
         MyGraph mG = new MyGraph();
 
+        assertThat(mG.size()).isEqualTo(0);
+
         //test filed graph no connection
         for (int i = 1; i <= 10; i++) {
             mG.addNode(i);
         }
+
+        assertThat(mG.size()).isEqualTo(10);
+
         List<Integer> expected = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         assertThat(mG.toList()).isEqualTo(expected);
         for (int i = 1; i <= 10; i++) {
@@ -53,6 +60,13 @@ public class TestMyGraph {
         assertThat(mG.isConnected(1 , 2)).isFalse();
         assertThat(mG.isConnected(-1 , 2)).isFalse();
 
+        try {
+            mG.addNeighbor(1, 2);
+            mG.addNeighbor(-1, 2);
+        } catch (Exception e) {
+
+        }
+
         mG.addNeighbor(1, 2);
         mG.addNeighbor(-1, 2);
         assertThat(mG.isConnected(1, 2)).isFalse();
@@ -70,7 +84,12 @@ public class TestMyGraph {
             mG.addNode(i);
         }
 
-        mG.addNeighbor(1, 11);
+        try {
+            mG.addNeighbor(1, 11);
+        }
+        catch (Exception e) {
+            ;
+        }
         assertThat(mG.isConnected(1, 11)).isFalse();
 
         assertThat(mG.isConnected(-1,2)).isFalse();
