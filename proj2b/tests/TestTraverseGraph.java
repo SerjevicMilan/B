@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import wnet.ListHashMap;
 import wnet.MyGraph;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class TestTraverseGraph {
@@ -55,12 +57,21 @@ public class TestTraverseGraph {
         //make tg with prev filled and conn graph
         TraverseGraph tg = new TraverseGraph(mG, hm);
 
+        //check if it finds all hyponyms
         assertThat(tg.findHyponyms(2)).isEqualTo(List.of(2, 4, 5, 7, 8, 9, 10));
 
+        //make graph cyclic
         mG.addNeighbor(9, 2);
 
-        tg = new TraverseGraph(mG, hm);
+        TraverseGraph  tg1 = new TraverseGraph(mG, hm);
 
-        assertThat(tg.findHyponyms(2)).isEqualTo(List.of(2, 4, 5, 7, 8, 9, 10));
+        //check if traverseGraph finds a bad graph state
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> {
+                    tg1.findHyponyms(2);
+                });
+
+        Assertions.assertEquals("Graph is not acyclic", exception.getMessage());
     }
 }

@@ -34,7 +34,7 @@ public class MyGraph {
      */
     public  void addNode(int value) {
         if (value < 0)//input cant be negative
-            return;
+            throw new IllegalArgumentException("only positive values allowed");
         Graph.put(value, new Node());
         size += 1;
     }

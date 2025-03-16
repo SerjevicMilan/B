@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import wnet.MyGraph;
 
@@ -5,6 +6,7 @@ import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -60,15 +62,24 @@ public class TestMyGraph {
         assertThat(mG.isConnected(1 , 2)).isFalse();
         assertThat(mG.isConnected(-1 , 2)).isFalse();
 
-        try {
-            mG.addNeighbor(1, 2);
-            mG.addNeighbor(-1, 2);
-        } catch (Exception e) {
 
-        }
+        //connecting nodes that do not exist
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    mG.addNeighbor(1, 2);
+                });
 
-        mG.addNeighbor(1, 2);
-        mG.addNeighbor(-1, 2);
+        Assertions.assertEquals("nodes are not in graph", exception.getMessage());
+
+        //connecting nodes that do not exist
+        exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    mG.addNeighbor(-1, 2);
+                });
+
+
         assertThat(mG.isConnected(1, 2)).isFalse();
         assertThat(mG.isConnected(-1, 2)).isFalse();
     }
@@ -77,23 +88,32 @@ public class TestMyGraph {
     public void TestBadInput() {
         MyGraph mG = new MyGraph();
 
-        mG.addNode(-1);
-        assertThat(mG.toList()).isEqualTo(List.of());
+        //adding  negative node
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    mG.addNode(-1);
+                });
 
+
+        Assertions.assertEquals("only positive values allowed", exception.getMessage());
+
+
+        //filling up graph
         for (int i = 1; i <= 10; i++) {
             mG.addNode(i);
         }
 
-        try {
-            mG.addNeighbor(1, 11);
-        }
-        catch (Exception e) {
-            ;
-        }
-        assertThat(mG.isConnected(1, 11)).isFalse();
 
-        assertThat(mG.isConnected(-1,2)).isFalse();
-        assertThat(mG.isConnected(2, -1)).isFalse();
+        //connecting after adding with none existing node
+        exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    mG.addNeighbor(1, 11);
+                });
+
+
+        Assertions.assertEquals("nodes are not in graph", exception.getMessage());
     }
 
 
