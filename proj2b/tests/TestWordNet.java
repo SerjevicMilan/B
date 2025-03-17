@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.In;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import wnet.WordNet;
@@ -9,15 +10,15 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestWordNet {
-    private static final String VERY_SHORT_WORDS_FILE = "data/ngrams/very_short.csv";
+    public static final String SMALL_HYPONYM_FILE = "data/wordnet/hyponyms16.txt";
     public static final String SMALL_SYNSET_FILE = "data/wordnet/synsets16.txt";
-    private static final String BAD_VERY_SHORT_WORDS_FILE = "data-1/ngrams/very_short.csv";
+    public static final String BAD_SMALL_HYPONYM_FILE = "data/wordnet/hyponyms16.txt";
     public static final String BAD_SMALL_SYNSET_FILE = "data-1/wordnet/synsets16.txt";
 
     //create WordNet and test parsing of txt file and filling hashMap
     @Test
     public void TestProcessSynsetFile() {
-        WordNet wn = new WordNet(SMALL_SYNSET_FILE, VERY_SHORT_WORDS_FILE);//construct WordNet with good input
+        WordNet wn = new WordNet(SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);//construct WordNet with good input
 
         List<Integer> expected =
                 new ArrayList<>(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
@@ -39,9 +40,47 @@ public class TestWordNet {
          exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    WordNet wn1 = new WordNet(BAD_SMALL_SYNSET_FILE, BAD_VERY_SHORT_WORDS_FILE);
+                    WordNet wn1 = new WordNet(BAD_SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);
                 });
 
         Assertions.assertEquals("Could not open data-1/wordnet/synsets16.txt", exception.getMessage());
+    }
+
+    //first word in synonym list is a first word for all synonyms
+    //every synonym should return first ford
+    @Test
+    public void testRestOfSynonymsToFirstWord() {
+        WordNet wn = new WordNet(SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);//construct WordNet with good input
+
+        //jump leap saltation (all should return jump)
+        assertThat(wn.getFirstWord("saltation")).isEqualTo("jump");
+        assertThat(wn.getFirstWord("leap")).isEqualTo("jump");
+        assertThat(wn.getFirstWord("jump")).isEqualTo("jump");
+        //not existing word should return null
+        assertThat(wn.getFirstWord("Milan")).isEqualTo(null);
+    }
+
+    /*
+    getDirectHyponyms should return direct hyponyms(Integers references to words)
+    or null if word doesn't  exist
+     */
+    @Test
+    public void TestprocessHyponymFile() {
+        WordNet wn = new WordNet(SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);//construct WordNet with good input
+
+        List<Integer> expected = new ArrayList<>(List.of(1, 6, 14));
+
+        assertThat(wn.getDirectHyponyms("event")).isEqualTo(expected);
+
+       assertThat(wn.getDirectHyponyms("Milan")).isEqualTo(null);
+
+    }
+
+    @Test
+    public void TestGetSynsetReverse() {
+        WordNet wn = new WordNet(SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);//construct WordNet with good input
+
+        assertThat(wn.getSynsetReverse("alteration")).isEqualTo(3);
+
     }
 }
