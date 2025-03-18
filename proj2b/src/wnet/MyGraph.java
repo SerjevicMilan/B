@@ -61,6 +61,10 @@ public class MyGraph<T> {
         Graph.get(word).synonymsNodes.add(synonym);
     }
 
+    /*
+    get synonyms for a node(word)
+    @param word key for hashMap
+     */
     public List<String> getSynonyms(T word) {
         if (!Graph.containsKey(word))
             return new ArrayList<>();

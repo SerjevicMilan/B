@@ -19,9 +19,9 @@ public class WordNet {
     private HashMap<Integer, String> hmSynset;
     //synonym as a key and chosen main word as value
     private HashMap<String,String> hmWords = new HashMap<>();
-
+    //word as key and list of corresponding graph nodes as value
     private HashMap<String, List<Integer>> reverseSynset = new HashMap<>();
-
+    //class used for traversing graph
     private TraverseGraph<Integer> tg = new TraverseGraph<>(mG);
 
 
@@ -76,6 +76,7 @@ public class WordNet {
         }
         RestOfSynonymsToFirstWord(line[1], line[0]);
 
+        //gets first word of synonyms string
         String[] splitSynonyms = line[1].split(" ");
 
         hm.put(Integer.parseInt(line[0]), splitSynonyms[0]);
@@ -112,6 +113,9 @@ adds node and synonyms to graph
         return new ArrayList<>(hmSynset.keySet());
     }
 
+    /*
+    swap values and keys storing keys in a list so repeating elements don't get overwritten
+     */
     private void makeReverseSynset() {
         List<Integer> temp;
         for (int key : hmSynset.keySet()) {
@@ -127,10 +131,8 @@ adds node and synonyms to graph
 
     /*
     Parses hyponyms text file, format "number, number, number, ..."
-    create new ListHashMap,pass it and nextLine to updateListMap
-    returns ListHashMap
+    and adds hyponyms to the graph
     @param hyponymFilename text file, format example "1, 2"
-    @return ListHashMap of word as key and integer array of hyponyms as values
      */
     private void processHyponymFile(String hyponymFilename) {
         if (hyponymFilename == null)
@@ -156,20 +158,20 @@ adds node and synonyms to graph
     /*
     gets array of strings, example [4, 6, 2, 20]
     where first number is reference to word and rest to its direct hyponyms
-    get word representation for numbers and
-    store it graph, word as a key and string hyponyms as values
+    store it graph, then connect hyponyms in graph
     @param splitLine array of integers
      */
     private void addHyponymsToGraph(String[] splitLine) {
         if (splitLine == null || splitLine.length == 0) {
             throw new InputMismatchException("input is badly format");
         }
-        Integer word = Integer.parseInt(splitLine[0]);//conv string to int and get word
+        Integer word = Integer.parseInt(splitLine[0]);//conv string to int
         if (word == null) {
             throw new InputMismatchException("input is badly formated");
         }
         for (int i = 1; i < splitLine.length; i++) {
             Integer hyponym = Integer.parseInt(splitLine[i]);
+            //connects first word to its hyponyms
             mG.addNeighbor(word, hyponym);
         }
     }
@@ -189,6 +191,11 @@ adds node and synonyms to graph
         return changeToString(intHyponyms);
     }
 
+    /*
+    change numbers representation of words to string using Synset
+    @param intHyponyms List of intigers
+    @return List of strings
+     */
     private List<String> changeToString(List<Integer> intHyponyms) {
         List<String> stringHyponyms = new ArrayList<>();
         for (int i : intHyponyms) {
@@ -197,13 +204,18 @@ adds node and synonyms to graph
         return stringHyponyms;
     }
 
+    /*
+    gets all hyponyms for the List of words including does words in list
+    @param words List of strings
+    @return list of string
+     */
     public List<String> getAllHyponyms(List<String> words) {
         List<String> list = null;
         for(String word : words) {
-            word = hmWords.get(word);
-            if (list == null)
+            word = hmWords.get(word);//check if its a synonym and return main word
+            if (list == null)//first time assign to the list
                 list = tg.findHyponyms(reverseSynset.get(word));
-            else
+            else//after first time only keep duplicates
                 list.retainAll(tg.findHyponyms(reverseSynset.get(word)));
         }
         return list;

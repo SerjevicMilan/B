@@ -26,10 +26,12 @@ public class TestWordComperator {
         return newList;
     }
 
+    //test comparator
     @Test
     public void TestComperatorBasic() {
         NGramMap ngm = new NGramMap(FREQUENCY_EECS_FILE, TOTAL_COUNTS_FILE);
         WordNet wn = new WordNet(SYNSETS_EECS_FILE, HYPONYMS_EECS_FILE);
+
 
         List<String> list = wn.getAllHyponyms(List.of("CS61A"));
         list.sort(new WordComparetor(ngm, 2010, 2020));

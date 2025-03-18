@@ -23,18 +23,29 @@ public class HyponymsHandler extends NgordnetQueryHandler {
 
     @Override
     public String handle(NgordnetQuery q) {
+        //gets list of all hyponyms of a word
         List<String> list = wn.getAllHyponyms(q.words());
-        list.sort(new WordComparetor(ngm, q.startYear(), q.endYear()));
 
-        list = kListElements(list, q.k());
-        Collections.sort(list);
+        //check if k(number of elements in array) is bigger then zero
+        if (q.k() > 0) {
+            list.sort(new WordComparetor(ngm, q.startYear(), q.endYear()));//sort list with custom comparator
+
+            list = kListElements(list, q.k());// limits list to k elements
+            Collections.sort(list);// sorts in normal order
+        }
 
         return list.toString();
     }
 
+    /*
+    copies k elements of a list in new one
+    @param list of Strings
+    @param k number of elements
+    @return string list of k elements
+     */
     private List<String> kListElements(List<String> list, int k) {
         List<String> newList = new ArrayList<>();
-        if (list.size() < k)
+        if (list.size() < k)//if list length less then k, list length is new k
             k = list.size();
         for (int i = 0; i < k; i++) {
             newList.add(list.get(i));
