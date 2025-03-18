@@ -3,6 +3,7 @@ package wnet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 
 /*
@@ -10,7 +11,6 @@ Used to traverse graph and get corresponding values from hashMap
  */
 public class TraverseGraph<T> {
     MyGraph<T> mg;
-    HashMap<T, Boolean> marked;
 
     /*
      Takes graph and HashMap holding corresponding values for vortices
@@ -21,7 +21,6 @@ public class TraverseGraph<T> {
      */
     public TraverseGraph(MyGraph<T> graph) {
         mg = graph;
-        marked = new HashMap<>();
     }
 
     /*
@@ -31,18 +30,20 @@ public class TraverseGraph<T> {
     @return
     List of vertices  values
      */
-    public List<T> findHyponyms (T word) {
+    public List<String> findHyponyms (List<T> words) {
         List<T> PQ = new ArrayList<>();
-        PQ.add(word);
-        return find(PQ);
+        if(words == null)
+            return List.of();
+        PQ.addAll(words);
+        return new ArrayList<>(find(PQ));
     }
 
     //helper function for TG, uses breath first search to traverse graph
 
-    private List<T> find(List<T> PQ) {
+    private TreeSet<String> find(List<T> PQ) {
         //first position in Priority Queue
         T firstInPQ;
-        List<T> hyponyms = new ArrayList<>();
+        TreeSet<String> hyponyms = new TreeSet<>();
        // hyponyms.add(startingNode);
        // mark(startingNode);
         //add starting node to hyponyms List (list of all nodes traversed)
@@ -51,25 +52,10 @@ public class TraverseGraph<T> {
         // do breath first search, add nodes to list
         while (!PQ.isEmpty()) {
             firstInPQ = PQ.removeFirst();
-            if (isMarked(firstInPQ)) {
-                throw new IllegalStateException("Graph is not acyclic");
-            }
-            mark(firstInPQ);
-            hyponyms.addLast(firstInPQ);
             hyponyms.addAll(mg.getSynonyms(firstInPQ));
             PQ.addAll(mg.getAdjacent(firstInPQ));
         }
-
         return hyponyms;
     }
 
-    // mark visited nodes
-    private void mark(T pos) {
-        marked.put(pos, true);
-    }
-
-    //check if node was visited
-    private boolean isMarked(T pos) {
-        return marked.containsKey(pos);
-    }
 }

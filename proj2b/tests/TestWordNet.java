@@ -74,8 +74,10 @@ public class TestWordNet {
         expected = new ArrayList<>(List.of("conversion", "mutation"));
         assertThat(wn.getDirectHyponyms("adjustment")).isEqualTo(expected);
 
-        expected = new ArrayList<>(List.of("transition", "increase", "jump", "leap", "saltation", "change" , "alteration", "modification"));
-        assertThat(wn.getAllHyponyms("change")).isEqualTo(expected);
+        expected = new ArrayList<>(List.of("alteration", "change", "demotion", "increase", "jump", "leap",
+                "modification", "saltation", "transition", "variation"));
+
+        assertThat(wn.getAllHyponyms(List.of("change"))).isEqualTo(expected);
 
         assertThat(wn.getDirectHyponyms("Milan")).isEqualTo(List.of());
 

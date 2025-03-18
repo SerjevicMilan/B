@@ -22,7 +22,7 @@ public class MyGraph<T> {
     //node for storing neighbors and synonyms
     private class Node {
         List<T> adjacentNodes;
-        List<T> synonymsNodes;
+        List<String> synonymsNodes;
 
         public Node () {
             adjacentNodes = new ArrayList<>();
@@ -55,13 +55,13 @@ public class MyGraph<T> {
     @param word key for node in hashMap
     @param synonym to a word
     */
-    public void addSynonyms(T word, T synonym) {
+    public void addSynonyms(T word, String synonym) {
         if (!Graph.containsKey(word))
             throw new IllegalArgumentException("nodes are not in graph");
         Graph.get(word).synonymsNodes.add(synonym);
     }
 
-    public List<T> getSynonyms(T word) {
+    public List<String> getSynonyms(T word) {
         if (!Graph.containsKey(word))
             return new ArrayList<>();
         return Graph.get(word).synonymsNodes;

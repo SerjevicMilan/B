@@ -1,6 +1,7 @@
 package wnet;
 
 import edu.princeton.cs.algs4.In;
+import ngrams.NGramMap;
 import ngrams.TimeSeries;
 
 import java.util.*;
@@ -13,21 +14,25 @@ HashMap with key(words from data) and values(vertices location in Graph).
  */
 public class WordNet {
     //Graph for storing integers corresponding to words
-    private MyGraph<String> mG = new MyGraph<>();
+    private MyGraph<Integer> mG = new MyGraph<>();
     //storing key Integers(graph nodes) and corresponding word
     private HashMap<Integer, String> hmSynset;
     //synonym as a key and chosen main word as value
     private HashMap<String,String> hmWords = new HashMap<>();
 
-    private TraverseGraph<String> tg = new TraverseGraph<>(mG);
+    private HashMap<String, List<Integer>> reverseSynset = new HashMap<>();
+
+    private TraverseGraph<Integer> tg = new TraverseGraph<>(mG);
+
 
     /*
     Construct WordNet by parsing text files and filling data structs
     @param synset text file of synsets (synonyms)
     @param hyponym tect file of hyponym represented as integers(word and hyponyms of word)
      */
-    public WordNet(String synset,String hyponym) {
+    public WordNet(String synset, String hyponym) {
         hmSynset = processSynsetFile(synset);
+        makeReverseSynset();
         processHyponymFile(hyponym);
     }
 
@@ -69,7 +74,7 @@ public class WordNet {
         if (line == null || line.length < 2) {
             throw new InputMismatchException("input is badly format");
         }
-        RestOfSynonymsToFirstWord(line[1]);
+        RestOfSynonymsToFirstWord(line[1], line[0]);
 
         String[] splitSynonyms = line[1].split(" ");
 
@@ -81,12 +86,13 @@ and make reference from all synonyms(from 2nd word) to first word(key word2, val
 adds node and synonyms to graph
 @param line String of words separated by white space
  */
-    private void RestOfSynonymsToFirstWord(String line) {
+    private void RestOfSynonymsToFirstWord(String line,String n) {
         String[] splitLine = line.split(" ");
-        mG.addNode(splitLine[0]);
+        Integer node = Integer.parseInt(n);
+        mG.addNode(node);
         for (int i = 0; i < splitLine.length;i++) {
             hmWords.put(splitLine[i], splitLine[0]);
-            mG.addSynonyms(splitLine[0], splitLine[i]);
+            mG.addSynonyms(node, splitLine[i]);
         }
     }
 
@@ -104,6 +110,19 @@ adds node and synonyms to graph
      */
     public List<Integer> getSynset() {
         return new ArrayList<>(hmSynset.keySet());
+    }
+
+    private void makeReverseSynset() {
+        List<Integer> temp;
+        for (int key : hmSynset.keySet()) {
+            if (reverseSynset.containsKey(hmSynset.get(key))) {
+                temp = new ArrayList<>(reverseSynset.get(hmSynset.get(key)));
+                temp.add(key);
+                reverseSynset.put(hmSynset.get(key),temp);
+            } else  {
+                reverseSynset.put(hmSynset.get(key), List.of(key));
+            }
+        }
     }
 
     /*
@@ -145,16 +164,15 @@ adds node and synonyms to graph
         if (splitLine == null || splitLine.length == 0) {
             throw new InputMismatchException("input is badly format");
         }
-        String word = hmSynset.get(Integer.parseInt(splitLine[0]));//conv string to int and get word
+        Integer word = Integer.parseInt(splitLine[0]);//conv string to int and get word
         if (word == null) {
             throw new InputMismatchException("input is badly formated");
         }
         for (int i = 1; i < splitLine.length; i++) {
-            String hyponym = hmSynset.get(Integer.parseInt(splitLine[i]));
-            mG.addNeighbor(word, hmSynset.get(Integer.parseInt(splitLine[i])));
+            Integer hyponym = Integer.parseInt(splitLine[i]);
+            mG.addNeighbor(word, hyponym);
         }
     }
-
     /*
     return list of integers representing hyponyms
     @param word is a String
@@ -162,12 +180,33 @@ adds node and synonyms to graph
      */
     public List<String> getDirectHyponyms(String word) {
         word = hmWords.get(word);
-        return mG.getAdjacent(word);
+        List<Integer> intHyponyms = new ArrayList<>();
+        if(!reverseSynset.containsKey(word))
+            return new ArrayList<>();
+        for(Integer n: reverseSynset.get(word)) {
+            intHyponyms.addAll(mG.getAdjacent(n));
+        }
+        return changeToString(intHyponyms);
     }
 
-    public List<String> getAllHyponyms(String word) {
-        if (!mG.containsNode(word))
+    private List<String> changeToString(List<Integer> intHyponyms) {
+        List<String> stringHyponyms = new ArrayList<>();
+        for (int i : intHyponyms) {
+            stringHyponyms.add(hmSynset.get(i));
+        }
+        return stringHyponyms;
+    }
+
+    public List<String> getAllHyponyms(List<String> words) {
+        List<String> list = null;
+        for(String word : words) {
             word = hmWords.get(word);
-        return tg.findHyponyms(word);
+            if (list == null)
+                list = tg.findHyponyms(reverseSynset.get(word));
+            else
+                list.retainAll(tg.findHyponyms(reverseSynset.get(word)));
+        }
+        return list;
+
     }
 }

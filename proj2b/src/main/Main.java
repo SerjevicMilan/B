@@ -5,6 +5,7 @@ import demo.DummyHistoryHandler;
 import demo.DummyHistoryTextHandler;
 import ngrams.NGramMap;
 import org.slf4j.LoggerFactory;
+import wnet.WordNet;
 
 public class Main {
     // ngrams files
@@ -31,13 +32,13 @@ public class Main {
     }
     public static void main(String[] args) {
         NgordnetServer hns = new NgordnetServer();
-        NGramMap ngm = new NGramMap(WORDS_FILE, TOTAL_COUNTS_FILE);
-        //WordNet wn = new WordNet(LARGE_SYNSET_FILE, LARGE_HYPONYM_FILE);
+        NGramMap ngm = new NGramMap(FREQUENCY_EECS_FILE, TOTAL_COUNTS_FILE);
+        WordNet wn = new WordNet(SYNSETS_EECS_FILE, HYPONYMS_EECS_FILE);
 
         hns.startUp();
         hns.register("history", new HistoryHandler(ngm));
         hns.register("historytext", new HistoryTextHandler(ngm));
-        hns.register("hyponyms", new HyponymsHandler());//add wm
+        hns.register("hyponyms", new HyponymsHandler(wn, ngm));//add wm
 
         System.out.println("Finished server startup! Visit http://localhost:4567/ngordnet.html");
     }
