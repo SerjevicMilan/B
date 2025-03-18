@@ -69,10 +69,15 @@ public class TestWordNet {
         WordNet wn = new WordNet(SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);//construct WordNet with good input
 
         List<String> expected = new ArrayList<>(List.of("happening", "act", "transition"));
-
         assertThat(wn.getDirectHyponyms("event")).isEqualTo(expected);
 
-       assertThat(wn.getDirectHyponyms("Milan")).isEqualTo(List.of());
+        expected = new ArrayList<>(List.of("conversion", "mutation"));
+        assertThat(wn.getDirectHyponyms("adjustment")).isEqualTo(expected);
+
+        expected = new ArrayList<>(List.of("transition", "increase", "jump", "leap", "saltation", "change" , "alteration", "modification"));
+        assertThat(wn.getAllHyponyms("change")).isEqualTo(expected);
+
+        assertThat(wn.getDirectHyponyms("Milan")).isEqualTo(List.of());
 
     }
 /*

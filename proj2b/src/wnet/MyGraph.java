@@ -114,4 +114,8 @@ public class MyGraph<T> {
     public int size() {
         return size;
     }
+
+    public boolean containsNode(T node) {
+        return Graph.containsKey(node);
+    }
 }

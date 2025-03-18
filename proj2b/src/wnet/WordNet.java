@@ -14,14 +14,12 @@ HashMap with key(words from data) and values(vertices location in Graph).
 public class WordNet {
     //Graph for storing integers corresponding to words
     private MyGraph<String> mG = new MyGraph<>();
-    //storing word(key) and corresponding hyponyms(list of Integers)
-    private ListHashMap<String, Integer> lhmHyponyms;
     //storing key Integers(graph nodes) and corresponding word
     private HashMap<Integer, String> hmSynset;
-    //reverse key values storing of hmSynset
-    private HashMap<String, Integer> hmSynsetReverse = new HashMap<>();
     //synonym as a key and chosen main word as value
     private HashMap<String,String> hmWords = new HashMap<>();
+
+    private TraverseGraph<String> tg = new TraverseGraph<>(mG);
 
     /*
     Construct WordNet by parsing text files and filling data structs
@@ -31,45 +29,6 @@ public class WordNet {
     public WordNet(String synset,String hyponym) {
         hmSynset = processSynsetFile(synset);
         processHyponymFile(hyponym);
-    }
-/*
-    private HashMap<String, Integer> reverseKeyValue() {
-        hmSynsetReverse = new HashMap<>();
-        for(Integer key : getSynset()) {
-            hmSynsetReverse.put(hmSynset.get(key), key);
-        }
-
-        return hmSynsetReverse;
-    }
-
-    public Integer getSynsetReverse(String word) {
-        return hmSynsetReverse.get(word);
-    }
-
-    private void fillAndConnectGraph() {
-        fillGraph();
-        connectGraph();
-    }
-*/
-    private void fillGraph() {
-        Set<Integer> nodes = hmSynset.keySet();
-
-        for (Integer node : nodes) {
-            mG.addNode(hmSynset.get(node));
-        }
-    }
-/*
-    private void connectGraph() {
-        Set<String> hyponymsSet = lhmHyponyms.keySet();
-        for (String hyponym : hyponymsSet) {
-            connectGrphHelper(hmSynsetReverse.get(hyponym), lhmHyponyms.get(hyponym));
-        }
-    }
-*/
-    private void connectGrphHelper(String firstNode, List<String> nodes) {
-        for (String secondNode : nodes) {
-            mG.addNeighbor(firstNode, secondNode);
-        }
     }
 
     /*
@@ -202,6 +161,13 @@ adds node and synonyms to graph
     @return List of integers
      */
     public List<String> getDirectHyponyms(String word) {
+        word = hmWords.get(word);
         return mG.getAdjacent(word);
+    }
+
+    public List<String> getAllHyponyms(String word) {
+        if (!mG.containsNode(word))
+            word = hmWords.get(word);
+        return tg.findHyponyms(word);
     }
 }

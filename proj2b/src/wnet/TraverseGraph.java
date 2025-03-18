@@ -31,18 +31,20 @@ public class TraverseGraph<T> {
     @return
     List of vertices  values
      */
-    public List<T> findHyponyms (T pos) {
-        return find(mg.getAdjacent(pos), pos);
+    public List<T> findHyponyms (T word) {
+        List<T> PQ = new ArrayList<>();
+        PQ.add(word);
+        return find(PQ);
     }
 
     //helper function for TG, uses breath first search to traverse graph
 
-    private List<T> find(List<T> PQ, T startingNode) {
+    private List<T> find(List<T> PQ) {
         //first position in Priority Queue
         T firstInPQ;
         List<T> hyponyms = new ArrayList<>();
-        hyponyms.add(startingNode);
-        mark(startingNode);
+       // hyponyms.add(startingNode);
+       // mark(startingNode);
         //add starting node to hyponyms List (list of all nodes traversed)
         //extend for marked needs graph size
 
@@ -54,6 +56,7 @@ public class TraverseGraph<T> {
             }
             mark(firstInPQ);
             hyponyms.addLast(firstInPQ);
+            hyponyms.addAll(mg.getSynonyms(firstInPQ));
             PQ.addAll(mg.getAdjacent(firstInPQ));
         }
 
