@@ -68,11 +68,11 @@ public class TestWordNet {
     public void TestprocessHyponymFile() {
         WordNet wn = new WordNet(SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);//construct WordNet with good input
 
-        List<Integer> expected = new ArrayList<>(List.of(1, 6, 14));
+        List<String> expected = new ArrayList<>(List.of("happening", "act", "transition"));
 
         assertThat(wn.getDirectHyponyms("event")).isEqualTo(expected);
 
-       assertThat(wn.getDirectHyponyms("Milan")).isEqualTo(null);
+       assertThat(wn.getDirectHyponyms("Milan")).isEqualTo(List.of());
 
     }
 /*
