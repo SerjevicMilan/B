@@ -8,10 +8,9 @@ import java.util.List;
 /*
 Used to traverse graph and get corresponding values from hashMap
  */
-public class TraverseGraph {
-    MyGraph mg;
-    HashMap<Integer, String> map;
-    HashMap<Integer, Boolean> marked;
+public class TraverseGraph<T> {
+    MyGraph<T> mg;
+    HashMap<T, Boolean> marked;
 
     /*
      Takes graph and HashMap holding corresponding values for vortices
@@ -20,9 +19,8 @@ public class TraverseGraph {
      @param map
      matching values to graph keys
      */
-    public TraverseGraph(MyGraph graph, HashMap<Integer, String> map) {
+    public TraverseGraph(MyGraph<T> graph) {
         mg = graph;
-        this.map = map;
         marked = new HashMap<>();
     }
 
@@ -33,16 +31,16 @@ public class TraverseGraph {
     @return
     List of vertices  values
      */
-    public List<Integer> findHyponyms (int pos) {
+    public List<T> findHyponyms (T pos) {
         return find(mg.getAdjacent(pos), pos);
     }
 
     //helper function for TG, uses breath first search to traverse graph
 
-    private List<Integer> find(List<Integer> PQ, int startingNode) {
+    private List<T> find(List<T> PQ, T startingNode) {
         //first position in Priority Queue
-        int firstInPQ;
-        List<Integer> hyponyms = new ArrayList<>();
+        T firstInPQ;
+        List<T> hyponyms = new ArrayList<>();
         hyponyms.add(startingNode);
         mark(startingNode);
         //add starting node to hyponyms List (list of all nodes traversed)
@@ -63,12 +61,12 @@ public class TraverseGraph {
     }
 
     // mark visited nodes
-    private void mark(int pos) {
+    private void mark(T pos) {
         marked.put(pos, true);
     }
 
     //check if node was visited
-    private boolean isMarked(int pos) {
+    private boolean isMarked(T pos) {
         return marked.containsKey(pos);
     }
 }

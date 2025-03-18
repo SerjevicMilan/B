@@ -13,7 +13,7 @@ HashMap with key(words from data) and values(vertices location in Graph).
  */
 public class WordNet {
     //Graph for storing integers corresponding to words
-    private MyGraph mG = new MyGraph();
+    private MyGraph<String> mG = new MyGraph<>();
     //storing word(key) and corresponding hyponyms(list of Integers)
     private ListHashMap<String, Integer> lhmHyponyms;
     //storing key Integers(graph nodes) and corresponding word
@@ -30,11 +30,11 @@ public class WordNet {
      */
     public WordNet(String synset,String hyponym) {
         hmSynset = processSynsetFile(synset);
-        lhmHyponyms = processHyponymFile(hyponym);
-        hmSynsetReverse = reverseKeyValue();
+        //lhmHyponyms = processHyponymFile(hyponym);
+        //hmSynsetReverse = reverseKeyValue();
         //fillAndConnectGraph();//add keys from synset to graph and connect using hyponyms
     }
-
+/*
     private HashMap<String, Integer> reverseKeyValue() {
         hmSynsetReverse = new HashMap<>();
         for(Integer key : getSynset()) {
@@ -52,24 +52,24 @@ public class WordNet {
         fillGraph();
         connectGraph();
     }
-
+*/
     private void fillGraph() {
         Set<Integer> nodes = hmSynset.keySet();
 
         for (Integer node : nodes) {
-            mG.addNode(node);
+            mG.addNode(hmSynset.get(node));
         }
     }
-
+/*
     private void connectGraph() {
         Set<String> hyponymsSet = lhmHyponyms.keySet();
         for (String hyponym : hyponymsSet) {
             connectGrphHelper(hmSynsetReverse.get(hyponym), lhmHyponyms.get(hyponym));
         }
     }
-
-    private void connectGrphHelper(Integer firstNode, List<Integer> nodes) {
-        for (Integer secondNode : nodes) {
+*/
+    private void connectGrphHelper(String firstNode, List<String> nodes) {
+        for (String secondNode : nodes) {
             mG.addNeighbor(firstNode, secondNode);
         }
     }

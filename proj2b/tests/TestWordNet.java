@@ -75,7 +75,7 @@ public class TestWordNet {
        assertThat(wn.getDirectHyponyms("Milan")).isEqualTo(null);
 
     }
-
+/*
     @Test
     public void TestGetSynsetReverse() {
         WordNet wn = new WordNet(SMALL_SYNSET_FILE, BAD_SMALL_HYPONYM_FILE);//construct WordNet with good input
@@ -83,4 +83,6 @@ public class TestWordNet {
         assertThat(wn.getSynsetReverse("alteration")).isEqualTo(3);
 
     }
+
+ */
 }

@@ -8,9 +8,9 @@ import java.util.List;
 custom graph  limited implementation
 of Directed Acyclic Graph
  */
-public class MyGraph {
+public class MyGraph<T> {
     //hashMap for storing graph
-    private HashMap<Integer, Node> Graph;
+    private HashMap<T , Node> Graph;
 
     private int size = 0;
 
@@ -19,12 +19,14 @@ public class MyGraph {
         Graph = new HashMap<>();
     }
 
-    //node for storing neighbors
+    //node for storing neighbors and synonyms
     private class Node {
-        List<Integer> adjacentNodes;
+        List<T> adjacentNodes;
+        List<T> synonymsNodes;
 
         public Node () {
             adjacentNodes = new ArrayList<>();
+            synonymsNodes = new ArrayList<>();
         }
     }
 
@@ -32,25 +34,37 @@ public class MyGraph {
     @param value
     new vortice
      */
-    public  void addNode(int value) {
-        if (value < 0)//input cant be negative
-            throw new IllegalArgumentException("only positive values allowed");
+    public  void addNode(T value) {
         Graph.put(value, new Node());
         size += 1;
     }
 
     /*
     get node from hashmap with base as a key and add new neighbor to node
-    @param adjacent
-    key for neighbor in hashMap
+    @param base key for node in hashMap
+    @param adjacent node to a base node
      */
-    public void addNeighbor(int base, int adjacent) {
-        if (base < 0 || base > Graph.size() || adjacent < 0 || adjacent > Graph.size())//check for bad input
-            throw new IllegalArgumentException("nodes are not in graph");
+    public void addNeighbor(T base, T adjacent) {
         if (!Graph.containsKey(base) || !Graph.containsKey(adjacent))
             throw new IllegalArgumentException("nodes are not in graph");
 
         Graph.get(base).adjacentNodes.add(adjacent);
+    }
+    /*
+    get node from hashmap with word as a key and add new synonym to node
+    @param word key for node in hashMap
+    @param synonym to a word
+    */
+    public void addSynonyms(T word, T synonym) {
+        if (!Graph.containsKey(word))
+            throw new IllegalArgumentException("nodes are not in graph");
+        Graph.get(word).synonymsNodes.add(synonym);
+    }
+
+    public List<T> getSynonyms(T word) {
+        if (!Graph.containsKey(word))
+            return new ArrayList<>();
+        return Graph.get(word).synonymsNodes;
     }
 
     /*
@@ -59,12 +73,12 @@ public class MyGraph {
     @param v
     key for Graph(HashMap)
     @return
-    List of integers representing vortices
+    List of T representing vortices
      */
-    public List<Integer> getAdjacent(int v) {
-        if (v < 0 || v > Graph.size())
+    public List<T> getAdjacent(T v) {
+        if (!Graph.containsKey(v))
             return new ArrayList<>();
-        return new ArrayList<Integer>(Graph.get(v).adjacentNodes);
+        return new ArrayList<T>(Graph.get(v).adjacentNodes);
     }
 
     /*
@@ -76,8 +90,8 @@ public class MyGraph {
     @return
     if connected return true otherwise false
      */
-    public boolean isConnected(int v1, int v2) {
-        if (v1 < 0 || v1 > Graph.size() || v2 < 0 || v2 > Graph.size())//check for bad input
+    public boolean isConnected(T v1, T v2) {
+        if (!Graph.containsKey(v1) || !Graph.containsKey(v2))//check for bad input
             return false;
         return Graph.get(v1).adjacentNodes.contains(v2);
     }
@@ -86,11 +100,11 @@ public class MyGraph {
     gets all keys from HashMap(Graph)
     and add them to a list
     @return
-    List of Integers
+    List of T
      */
-    public List<Integer> toList() {
-        List<Integer> list = new ArrayList();
-        for(int k : Graph.keySet()) {
+    public List<T> toList() {
+        List<T> list = new ArrayList();
+        for(T k : Graph.keySet()) {
             list.add(k);
         }
         return list;

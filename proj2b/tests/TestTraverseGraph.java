@@ -18,12 +18,12 @@ public class TestTraverseGraph {
 
     @Test
             public void TestBasicTG() {
-        MyGraph mG = new MyGraph();
+        MyGraph<String> mG = new MyGraph<>();
         HashMap<Integer, String> hm = new HashMap<>();
 
         //fill graph
         for (int i = 1; i <= 10; i++) {
-            mG.addNode(i);
+            mG.addNode("m" + i);
         }
         //add connections
         /*
@@ -44,32 +44,32 @@ public class TestTraverseGraph {
                 |---6
 
          */
-        mG.addNeighbor(1, 2);
-        mG.addNeighbor(1, 3);
-        mG.addNeighbor(2, 4);
-        mG.addNeighbor(2, 5);
-        mG.addNeighbor(3, 6);
-        mG.addNeighbor(4, 7);
-        mG.addNeighbor(4, 8);
-        mG.addNeighbor(4, 9);
-        mG.addNeighbor(5, 10);
+        mG.addNeighbor("m1", "m2");
+        mG.addNeighbor("m1", "m3");
+        mG.addNeighbor("m2", "m4");
+        mG.addNeighbor("m2", "m5");
+        mG.addNeighbor("m3", "m6");
+        mG.addNeighbor("m4", "m7");
+        mG.addNeighbor("m4", "m8");
+        mG.addNeighbor("m4", "m9");
+        mG.addNeighbor("m5", "m10");
 
         //make tg with prev filled and conn graph
-        TraverseGraph tg = new TraverseGraph(mG, hm);
+        TraverseGraph<String> tg = new TraverseGraph<>(mG);
 
         //check if it finds all hyponyms
-        assertThat(tg.findHyponyms(2)).isEqualTo(List.of(2, 4, 5, 7, 8, 9, 10));
+        assertThat(tg.findHyponyms("m2")).isEqualTo(List.of("m2", "m4", "m5", "m7", "m8", "m9", "m10"));
 
         //make graph cyclic
-        mG.addNeighbor(9, 2);
+        mG.addNeighbor("m9", "m2");
 
-        TraverseGraph  tg1 = new TraverseGraph(mG, hm);
+        TraverseGraph<String>  tg1 = new TraverseGraph<>(mG);
 
         //check if traverseGraph finds a bad graph state
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> {
-                    tg1.findHyponyms(2);
+                    tg1.findHyponyms("m2");
                 });
 
         Assertions.assertEquals("Graph is not acyclic", exception.getMessage());
