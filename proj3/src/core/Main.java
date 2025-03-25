@@ -2,9 +2,7 @@ package core;
 
 public class Main {
     public static void main(String[] args) {
-
-        // build your own world!
-
-
+        World world = new World(1, 80, 50);
+        world.renderFrame();
     }
 }
