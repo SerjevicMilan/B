@@ -31,108 +31,208 @@ public class World {
         this.height = height;
         worldTiles = new TETile[width][height];
         randomNumber = new Random(random);
-        worldTiles = fillWorldTiles(worldTiles);
+        fillWorldTiles();
         world = new TERenderer();
         world.initialize(width, height);
     }
 
-    private class Position {
-        int x;
-        int y;
-        Direction direction;
-
-        private Position() {
-            x = 0;
-            y = 0;
-            direction = null;
-        }
+    /*
+    Filling 2d array with tiles
+     */
+    private void fillWorldTiles() {
+        fillWorldFlorTiles();
+        fillWorldBorderTiles();
+        fillRandomWallTiles();
     }
+
 
     /*
-    Filling tiles with green dots (Tileset.FLOOR)
-    by traversing the array.
-     */
-    private TETile[][] fillWorldTiles(TETile[][] tiles) {
-        tiles = fillWorldFlorTiles(tiles);
-        //tiles = fillWorldBorderTiles(tiles);
-        tiles = fillRandomWallTiles(tiles);
-        return tiles;
-    }
-
-    private TETile[][] fillRandomWallTiles(TETile[][] tiles) {
-        int direction;
+    choose random starting position, direction and fill with wall tiles choosing random direction
+    with min 2 and max 8 tiles in same direction.
+    */
+    private void fillRandomWallTiles() {
         Position pos = randomStartPosition();
         pos.direction = Random4Direction();
 
-        addWall(tiles, pos);
+        addWall(worldTiles, pos);
 
-        return tiles;
-
-        //return fillWall(tiles,pos);
+        fillWall(pos);
     }
 
+    /*
+    Add wall tiles on position
+    @param pos position of 2d array(pos.x, pos.y)
+     */
     private void addWall(TETile[][] tiles, Position pos) {
         tiles[pos.x][pos.y] = Tileset.WALL;
     }
 
+
     /*
-    private TETile[][] fillWall(TETile[][] tiles,Position pos) {
-        while (pos.direction != null) {
-                pos = fillDirection(tiles, pos);
-        }
-        return tiles;
-    }
-
-    private Position fillDirection(TETile[][] tiles, Position pos) {
-        int count = 0;
-        int newDirection;
-        if(canFillminimum()) {
-                x, y, direction = fillThree(tiles, x, y, direction);
-            }
-
-            while (count < 5) {
-                newDirection = Random3Direction(x, y);
-                if (newDirection != direction)
-                    direction = newDirection;
-                return x,y, direction;
-                if(!canFill())
-                    break;
-                x, y, direction = fillSameDirection(tiles, x, y, direction);
-                count++;
-            }
-
-        return x,y,Random2Direction(x, y);//returns -1 if not possible
-    }
-
-   x,y,direction fill(TETile[][] tiles, int x, int y, int direction) {
-        int x = 0;
-        int y = 0;
-
-        if (direction == Direction.LEFT) {
-                x = x - 1;
-        }
-        if (direction == Direction.RIGHT) {
-                x = x + 1;
-        }
-        if (direction == Direction.UP) {
-            y = y + 1;
-        }
-        if (direction == Direction.DOWN) {
-            y = y - 1;
-        }
-        if(canFill(d.x + x, d.y + y)) {
-            d.x += x;
-            d.y += y;
-            fill(d.x, d.y);
-        }
-
-        return x,y,direction;
-    }
-
-    private boolean canFill(x, y, direction) {
-    return true;
-    }
+    Fill with wall tiles.Every change of direction run fillDirection again.
+    When filling is than fillDirection will return null.
      */
+    private void fillWall(Position pos) {
+        while (pos.direction != null) {
+                pos = fillDirection(worldTiles, pos);
+        }
+    }
+
+    /*
+     From position fill in pos.direction tiles min 2 times, after that chose direction randomly.
+     If going in that direction is not possible try picking new direction.
+     After picking new direction return it.
+     If all directions blocked return null
+     */
+    public Position fillDirection(TETile[][] tiles,Position pos) {
+        int count = 0;
+        Position newPos;
+
+
+        fillMin(tiles, pos);
+        while (count < 5) {
+            newPos = new Position(pos.x, pos.y, pos.direction);
+            RandomXDirection(newPos, false);
+
+            if (newPos == null || newPos.direction != pos.direction) {
+                pos.direction = newPos.direction;
+                return pos;
+            }
+            fill(tiles,pos, 1);
+            count++;
+        }
+        RandomXDirection(pos, true);
+        return pos;//returns null if not possible
+
+    }
+    /*
+    Fill 3 tiles in same direction if possible
+     */
+
+    private void fillMin(TETile[][] tiles,Position pos) {
+        if (canFillminimum(pos)) {
+            fill(tiles, pos, 3);
+        } else {
+            fill(tiles, pos, 1);
+        }
+    }
+
+
+    /*
+    Uses pos direction to update coordinates(pos.x, pos.y) and addWall on that position.
+    Do it k times
+    */
+    public Position fill(TETile[][] tiles, Position pos, int k) {
+        for (int i = 0; i < k; i++){
+            updatePosition(pos);
+            addWall(tiles, pos);
+        }
+        return pos;
+    }
+    /*
+    Uses pos.direction to update coordinates(pos.x, pos.y)
+     */
+    public Position updatePosition(Position pos) {
+        if ( pos.direction == Direction.LEFT) {
+            pos.x = pos.x - 1;
+        }
+        if (pos.direction == Direction.RIGHT) {
+            pos.x = pos.x + 1;
+        }
+        if (pos.direction == Direction.UP) {
+            pos.y = pos.y + 1;
+        }
+        if (pos.direction == Direction.DOWN) {
+            pos.y = pos.y - 1;
+        }
+        return pos;
+    }
+
+
+    /*
+    Compare direction and return opposite one
+     */
+    private Direction oppositeDirection(Direction direction) {
+        Direction opposite = null;
+        if(direction == Direction.UP) { opposite = Direction.DOWN; }
+        if(direction == Direction.DOWN) { opposite = Direction.UP; }
+        if(direction == Direction.LEFT) { opposite = Direction.RIGHT; }
+        if(direction == Direction.RIGHT) { opposite = Direction.LEFT; }
+        return opposite;
+    }
+
+    /*
+    Check if there is valid place to fill and call helper method,
+    or assign null to direction
+     */
+    public void RandomXDirection(Position pos, boolean notCurrentDirection) {
+        Direction oppositeDirection = oppositeDirection(pos.direction);
+        Direction newDirection;
+
+        if (canFillAny(pos, notCurrentDirection)) { RandomXDirectionHelper(pos, notCurrentDirection); }
+        else { pos.direction = null; }
+    }
+
+    /*
+   Return random direction(LEFT, RIGHT, UP, DOWN),
+   if current direction is not allowed returns random direction(except opposite one
+   and current one),
+   if its allowed, include current one as one of potential random directions.
+    */
+    private void RandomXDirectionHelper(Position pos, boolean notCurrentDirection) {
+        Direction oppositeDirection = oppositeDirection(pos.direction);
+        Position newPos = new Position(pos.x, pos.y, pos.direction);
+
+
+        while (true) {
+            newPos.direction = Random4Direction();
+            if (notCurrentDirection) {//if current direction is not valid
+                if (newPos.direction != pos.direction && newPos.direction != oppositeDirection
+                    && canFill(newPos)) {
+                    pos.direction = newPos.direction;
+                    break;
+                }
+            }
+            if (newPos.direction != oppositeDirection && canFill(newPos)) {
+                pos.direction = newPos.direction;
+                break;
+            }
+        }
+    }
+
+    private boolean canFill(Position pos) {
+        if (worldTiles[pos.x][pos.y] == Tileset.FLOOR) {//if one pos good
+            return true;
+        }
+        return false;
+    }
+
+   private boolean canFillAny(Position pos, boolean notCurrentDirection) {
+       Direction oppositeDirection = oppositeDirection(pos.direction);
+       Position testPos;
+
+       for (int k = 0; k < 4; k++) {
+           testPos = new Position(pos.x, pos.y, pos.direction);
+           if (Direction.values()[k] != oppositeDirection) {//you cant go backwards
+               updatePosition(testPos);
+               if (worldTiles[testPos.x][testPos.y] == Tileset.FLOOR) {//if one pos good
+                   return true;
+               }
+           }
+       }
+       return false;
+   }
+
+   private boolean canFillminimum(Position pos) {
+       Position newPos = new Position(pos.x, pos.y, pos.direction);
+       for (int i = 0; i < 3; i++) {
+           updatePosition(newPos);
+           if (worldTiles[newPos.x][newPos.y] != Tileset.FLOOR) {
+               return false;
+           }
+       }
+       return true;
+   }
 
     private Direction Random4Direction() {
         int d = RandomUtils.uniform(randomNumber, 4);
@@ -150,31 +250,30 @@ public class World {
     /*
   Filling tiles with green dots (Tileset.FLOOR) by traversing the array.
    */
-    private TETile[][]  fillWorldFlorTiles(TETile[][] tiles) {
+    private void   fillWorldFlorTiles() {
         for (int x = 0; x < width; x++) {
             for (int y = height - 1; y >= 0; y--) {
-                tiles[x][y] = Tileset.FLOOR;
+                worldTiles[x][y] = Tileset.FLOOR;
             }
         }
-        return tiles;
     }
 
     /*
  Filling boarder tiles with Tileset.Nothing(black space) by traversing the boarder of array.
   */
-    private TETile[][]  fillWorldBorderTiles(TETile[][] tiles) {
+    private TETile[][]  fillWorldBorderTiles() {
         for (int x = 0; x < width; x = x + width - 1) {
             for (int y = 0; y < height; y++) {
-                tiles[x][y] = Tileset.NOTHING;
+                worldTiles[x][y] = Tileset.NOTHING;
             }
         }
 
         for (int y = 0; y < height; y = y + height - 1) {
             for (int x = 0; x < width; x++) {
-                tiles[x][y] = Tileset.NOTHING;
+                worldTiles[x][y] = Tileset.NOTHING;
             }
         }
-        return tiles;
+        return worldTiles;
     }
     /*
     Render 2d board height and width dimensions
